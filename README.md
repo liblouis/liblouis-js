@@ -3,6 +3,12 @@ compiling [liblouis](https://github.com/liblouis/liblouis) using
 [emscripten](http://emscripten.org/).
 
 ```js
+// Using easy_wrapper.js:
+console.info("Liblouis Version:", liblouis.version());
+// Should print:
+// Liblouis Version: 3.0.0
+
+// Using liblouis.js directly:
 console.info("Liblouis Version:", Module.ccall("lou_version", "string"));
 // Should print:
 // Liblouis Version: 3.0.0
