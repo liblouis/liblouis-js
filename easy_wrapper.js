@@ -68,4 +68,5 @@ liblouis = {
 	//readCharFromFile: Module.cwrap('lou_readCharFromFile'),
 
 	free: Module.cwrap('lou_free'),
+	charSize: Module.cwrap('lou_charSize', 'number'),
 };

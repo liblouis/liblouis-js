@@ -10,28 +10,28 @@ compiling [liblouis](https://github.com/liblouis/liblouis) using
 
 | Method           | Easy wrapper | Direct call |
 |------------------|--------------|-------------|
-| `_lou_version` | ✔ | ✔ |
-| `_lou_translateString` | ✔* | ✔ |
-| `_lou_translate` | ✖ | ✔ |
-| `_lou_backTranslateString` | ✔* | ✔ |
-| `_lou_backTranslate` | ✖ | ✔ |
-| `_lou_hyphenate` | ✖ | ✔ |
-| `_lou_compileString` | ✖ | ✔ |
-| `_lou_getTypeformForEmphClass` | ✖ | ✔ |
-| `_lou_dotsToChar` | ✖ | ✔ |
-| `_lou_charToDots` | ✖ | ✔ |
-| `_lou_registerLogCallback` | ✖ | ✔ |
-| `_lou_setLogLevel` | ✖ | ✔ |
-| `_lou_logFile` | ✖ | ✔ |
-| `_lou_logPrint` | ✖ | ✔ |
-| `_lou_logEnd` | ✖ | ✔ |
-| `_lou_setDataPath` | ✖ | ✔ |
-| `_lou_getDataPath` | ✖ | ✔ |
-| `_lou_getTable` | ✔ | ✔ |
-| `_lou_checkTable` | ✔ | ✔ |
-| `_lou_readCharFromFile` | ✖ | ✔ |
-| `_lou_free` | ✔ | ✔ |
-| `_lou_charSize` | ✖ | ✖ |
+| `lou_version` | ✔ | ✔ |
+| `lou_translateString` | ✔* | ✔ |
+| `lou_translate` | ✖ | ✔ |
+| `lou_backTranslateString` | ✔* | ✔ |
+| `lou_backTranslate` | ✖ | ✔ |
+| `lou_hyphenate` | ✖ | ✔ |
+| `lou_compileString` | ✖ | ✔ |
+| `lou_getTypeformForEmphClass` | ✖ | ✔ |
+| `lou_dotsToChar` | ✖ | ✔ |
+| `lou_charToDots` | ✖ | ✔ |
+| `lou_registerLogCallback` | ✖ | ✔ |
+| `lou_setLogLevel` | ✖ | ✔ |
+| `lou_logFile` | ✖ | ✔ |
+| `lou_logPrint` | ✖ | ✔ |
+| `lou_logEnd` | ✖ | ✔ |
+| `lou_setDataPath` | ✖ | ✔ |
+| `lou_getDataPath` | ✖ | ✔ |
+| `lou_getTable` | ✔ | ✔ |
+| `lou_checkTable` | ✔ | ✔ |
+| `lou_readCharFromFile` | ✖ | ✔ |
+| `lou_free` | ✔ | ✔ |
+| `lou_charSize` | ✔ | ✔ |
 
 <small>* only [BMP](https://en.wikipedia.org/wiki/Plane_(Unicode)#Basic_Multilingual_Plane) tested</small>
 
