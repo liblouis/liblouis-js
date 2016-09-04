@@ -49,23 +49,8 @@ liblouis = {
 		return String.fromCharCode.apply(null, outstr_buff);
 	},
 
-	//translate: Module.cwrap('lou_translate'),
-	//dotsToChar: Module.cwrap('lou_dotsToChar'),
-	//backTranslate: Module.cwrap('lou_backTranslate'),
-	//hypenate: Module.cwrap('lou_hyphenate'),
-	//compileString: Module.cwrap('lou_compileString'),
-	//getTypeformForEmphClass: Module.cwrap('lou_getTypeformForEmphClass'),
-	//charToDots: Module.cwrap('lou_charToDots'),
-	//registerLogCallback: Module.cwrap('lou_registerLogCallback'),
-	//setLogLevel: Module.cwrap('lou_setLogLevel'),
-	//logFile: Module.cwrap('lou_logFile'),
-	//logPrint: Module.cwrap('lou_logPrint'),
-	//logEnd: Module.cwrap('lou_logEnd'),
-	//setDataPath: Module.cwrap('lou_setDataPath'),
-	//getDataPath: Module.cwrap('lou_getDataPath'),
 	getTable: Module.cwrap('lou_getTable', 'number', ['string']),
 	checkTable: Module.cwrap('lou_checkTable', 'number', ['string']),
-	//readCharFromFile: Module.cwrap('lou_readCharFromFile'),
 
 	free: Module.cwrap('lou_free'),
 	charSize: Module.cwrap('lou_charSize', 'number'),
