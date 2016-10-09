@@ -1,8 +1,46 @@
-liblouis = {
+/*globals
+	Module,
+	FS,
+	stringToUTF16
+*/
+
+(function(ns) { "use strict";
+
+var TABLE_URL = '';
+
+//function file_exists(path) {
+	//try {
+		//FS.lookupPath(path);
+	//} catch(e) {
+		//return false;
+	//}
+
+	//return true;
+//}
+
+var FS_ORIGINAL_LOOKUP = FS.lookup;
+var FS_DYNAMIC_LOOKUP = function dynloader(parent, name) {
+	FS.lookup = FS_ORIGINAL_LOOKUP;
+
+	var res;
+
+	if(/*!file_exists(parent + name) &&*/
+		/(\.cti|\.ctb|\.utb|\.dis|\.uti)$/.test(name)) {
+		var url = TABLE_URL + name;
+		res = FS.createLazyFile(parent, name, url, true, true);
+	} else {
+		res = FS.lookup.apply(this, [parent, name]);
+	}
+
+	FS.lookup = FS_DYNAMIC_LOOKUP;
+	return res;
+};
+
+ns.liblouis = {
 	version: Module.cwrap('lou_version', 'string'),
 
 	backTranslateString: function(table, inbuf) {
-		return liblouis.translateString(table, inbuf, true);
+		return ns.liblouis.translateString(table, inbuf, true);
 	},
 
 	translateString: function(table, inbuf, backtranslate) {
@@ -16,7 +54,7 @@ liblouis = {
 		// TODO: internally no conversion is done, only copies values
 		// to memory, which is okay for BMP
 		// TODO: this writes an unnecessary null byte
-		var strlen = stringToUTF16(inbuf, inbuff_ptr, bufflen);
+		stringToUTF16(inbuf, inbuff_ptr, bufflen);
 
 		// in emscripten we need a 32bit cell for each pointer
 		var bufflen_ptr = Module._malloc(4);
@@ -54,4 +92,20 @@ liblouis = {
 
 	free: Module.cwrap('lou_free'),
 	charSize: Module.cwrap('lou_charSize', 'number'),
+
+	loadTable: function(tablename, url) {
+		FS.createPreloadedFile('/', tablename, url, true, true);
+	},
+
+	enableOnDemandTableLoading: function(tableurl) {
+		TABLE_URL = tableurl;
+		FS.lookup = FS_DYNAMIC_LOOKUP;
+	},
+
+	disableOnDemandTableLoading: function(tableurl) {
+		TABLE_URL = tableurl;
+		FS.lookup = FS_ORIGINAL_LOOKUP;
+	}
 };
+
+})(this);
