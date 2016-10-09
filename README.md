@@ -4,7 +4,8 @@ compiling [liblouis](https://github.com/liblouis/liblouis) using
 
 | File             | Filesize | Description                | Version                  |
 |------------------|----------|----------------------------|--------------------------|
-| `liblouis.js`    | 29.8MB   | All tables embeded in file | commit 62e7cbf (> 3.0.0) |
+| `liblouis.js`    | 29.8MB   | All tables embeded in file | commit 7e363d0 (> 3.0.0) |
+| `liblouis-no-tables.js`    | 1.47MB   | Tables not included | commit 7e363d0 (> 3.0.0) |
 
 # API Overview
 
