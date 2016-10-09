@@ -1,0 +1,47 @@
+# liblouis: corrections table
+#
+#  Copyright (C) 2009 JJB Software, Inc. www.jjb-software.com
+#
+#  This file is part of liblouis.
+#
+#  liblouis is free software: you can redistribute it and/or modify it
+#  under the terms of the GNU Lesser General Public License as
+#  published by the Free Software Foundation, either version 2.1 of the
+#  License, or (at your option) any later version.
+#
+#  liblouis is distributed in the hope that it will be useful, but
+#  WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+#  Lesser General Public License for more details.
+#
+#  You should have received a copy of the GNU Lesser General Public
+#  License along with liblouis. If not, see
+#  <http://www.gnu.org/licenses/>.
+
+# Append this table to others to correct scannos, etc.
+
+repeated ____ 456-456-456-456
+repeated ---- 36-36-36-36
+repeated .... 3-3-3-3 
+sign \x0094 5
+correct "\x0094" "\""
+correct "\x00a0" "\s"
+correct "\x000a" "\s"
+space \x00ad 0
+correct "\x00ad" ?
+correct "\x2019" "'"
+space \x0097 0
+correct "\x0097" "\s"
+correct "(\s" "("
+correct "\s)" ")" 
+correct "cornf" "comf"
+correct "cornm" "comm"
+correct "cornp" "comp"
+correct $p["-"] "\s-\s"
+correct "..." *
+correct "\s," ","
+correct "\s." "."
+correct "\s?" "?"
+correct "-\"" "--\""
+correct [".\s\""]$s ".\""
+correct "-"$s ?
