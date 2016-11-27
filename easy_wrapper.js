@@ -44,6 +44,11 @@ ns.liblouis = {
 	},
 
 	translateString: function(table, inbuf, backtranslate) {
+
+		if(typeof inbuf !== "string" || inbuf.length === 0) {
+			return "";
+		}
+
 		var mode = 0;
 
 		var bufflen = inbuf.length*4+2;

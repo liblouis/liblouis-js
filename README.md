@@ -1,6 +1,13 @@
 These are unoffical "javascript bindings" to liblouis created by cross
 compiling [liblouis](https://github.com/liblouis/liblouis) using
-[emscripten](http://emscripten.org/).
+[emscripten](http://emscripten.org/). Liblouis can be directly called
+using the [`ccall`](https://kripken.github.io/emscripten-site/docs/api_reference/preamble.js.html#ccall) and 
+[`cwrap`](https://kripken.github.io/emscripten-site/docs/api_reference/preamble.js.html#cwrap) functions or
+by using the optional javascript API exposed by the file `easy_wrapper.js`.
+
+```
+npm install liblouis-js
+```
 
 | File             | Filesize | Description                | Version                  |
 |------------------|----------|----------------------------|--------------------------|
@@ -38,7 +45,17 @@ compiling [liblouis](https://github.com/liblouis/liblouis) using
 
 # Usage Examples
 
+## Printing the version number of liblouis using the easy-wrapper-API and the direct-call-API 
+Include one of the `liblouis-*.js` files first. Afterwards you can optionally
+include `easy_wrapper.js`.
+
 ```js
+<!doctype html>
+
+<script src="liblouis-tables-embeded.js"></script>
+<script src="easy_wrapper.js"></script>
+
+<script>
 // Using easy_wrapper.js:
 console.info("Liblouis Version:", liblouis.version());
 // Should print:
@@ -48,8 +65,10 @@ console.info("Liblouis Version:", liblouis.version());
 console.info("Liblouis Version:", Module.ccall("lou_version", "string"));
 // Should print:
 // Liblouis Version: 3.0.0
+</script>
 ```
 
+## Translating and backtranslating a string using the easy-wrapper-API
 ```js
 var unicode_braille = liblouis.translateString("tables/unicode.dis,tables/de-de-g0.utb", "10 Ziegen")
 // Variable should contain:
@@ -59,8 +78,8 @@ console.log(liblouis.backTranslateString("tables/unicode.dis,tables/de-de-g0.utb
 // 10 ziegen
 ```
 
-Note that the Unicode Braille Patterns in line 3 of example 2 may not be
-displayed in your browser or text editor.
+<small>Note that the Unicode Braille Patterns in line 3 may not be
+displayed in your browser or text editor.</small>
 
 # Downloading Table Files on Demand
 
@@ -77,3 +96,6 @@ var unicode_braille = liblouis.translateString("tables/unicode.dis,tables/de-de-
 // content as above:
 // ⠼⠁⠚ ⠵⠊⠑⠛⠑⠝
 ```
+
+Note that you have to run liblouis in a worker thread for
+`enableOnDemandTableLoading` to work.
