@@ -1,0 +1,24 @@
+{
+  "name": "liblouis-js",
+  "description": "javascript bindings for liblouis",
+  "main": [
+    "liblouis-no-tables.js"
+  ],
+  "moduleType": [
+    "amd",
+    "globals",
+    "node"
+  ],
+  "keywords": [
+    "braille",
+    "transcription"
+  ],
+  "authors": [
+    "Reiner Dolp"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/reiner-dolp/liblouis-js.git"
+  },
+  "license": "GPL-3.0"
+}
