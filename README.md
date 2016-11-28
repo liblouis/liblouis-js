@@ -5,9 +5,7 @@ using the [`ccall`](https://kripken.github.io/emscripten-site/docs/api_reference
 [`cwrap`](https://kripken.github.io/emscripten-site/docs/api_reference/preamble.js.html#cwrap) functions or
 by using the optional javascript API exposed by the file `easy_wrapper.js`.
 
-```
-npm install liblouis-js
-```
+[![npm version](https://badge.fury.io/js/liblouis-js.svg)](https://www.npmjs.com/package/liblouis-js)
 
 | File             | Filesize | Description                | Version                  |
 |------------------|----------|----------------------------|--------------------------|
