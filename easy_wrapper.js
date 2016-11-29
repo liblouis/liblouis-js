@@ -39,6 +39,27 @@ var FS_DYNAMIC_LOOKUP = function dynloader(parent, name) {
 ns.liblouis = {
 	version: Module.cwrap('lou_version', 'string'),
 
+	setLogLevel: Module.cwrap('lou_setLogLevel', 'number'),
+
+	registerLogCallback: function(fn) {
+
+		if(ns._log_callback_fn_pointer) {
+			Runtime.removeFunction(ns._log_callback_fn_pointer);
+		}
+
+		if(fn !== null) {
+			ns._log_callback_fn_pointer = Runtime.addFunction(function(logLvl, msg) {
+				fn(logLvl, Pointer_stringify(msg));
+			});
+		} else {
+			ns._log_callback_fn_pointer = null;
+		}
+
+
+		Module.ccall('lou_registerLogCallback', 'void', ['pointer'],
+				[ns._log_callback_fn_pointer]);
+	},
+
 	backTranslateString: function(table, inbuf) {
 		return ns.liblouis.translateString(table, inbuf, true);
 	},
@@ -112,5 +133,14 @@ ns.liblouis = {
 		FS.lookup = FS_ORIGINAL_LOOKUP;
 	}
 };
+
+ns.liblouis.LOG = {};
+ns.liblouis.LOG[ns.liblouis.LOG.ALL   =     0] = "ALL";
+ns.liblouis.LOG[ns.liblouis.LOG.DEBUG = 10000] = "DEBUG";
+ns.liblouis.LOG[ns.liblouis.LOG.INFO  = 20000] = "INFO";
+ns.liblouis.LOG[ns.liblouis.LOG.WARN  = 30000] = "WARN";
+ns.liblouis.LOG[ns.liblouis.LOG.ERROR = 40000] = "ERROR";
+ns.liblouis.LOG[ns.liblouis.LOG.FATAL = 50000] = "FATAL";
+ns.liblouis.LOG[ns.liblouis.LOG.OFF   =  6000] = "OFF";
 
 })(this);
