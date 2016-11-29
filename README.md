@@ -32,7 +32,7 @@ commit tagged as version 3.0.0*.
 | `lou_getTypeformForEmphClass` | ✖ | ✔ |
 | `lou_dotsToChar` | ✖ | ✔ |
 | `lou_charToDots` | ✖ | ✔ |
-| `lou_registerLogCallback` | ✖ | ✔ |
+| `lou_registerLogCallback` | ✔ | ✔ |
 | `lou_setLogLevel` | ✔ | ✔ |
 | `lou_logFile` | ✖ | ✔ |
 | `lou_logPrint` | ✖ | ✔ |
