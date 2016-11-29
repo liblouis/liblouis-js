@@ -2,8 +2,9 @@ These are unoffical "javascript bindings" to liblouis created by cross
 compiling [liblouis](https://github.com/liblouis/liblouis) using
 [emscripten](http://emscripten.org/). The official Liblouis API written in C can be directly called
 using the [`ccall`](https://kripken.github.io/emscripten-site/docs/api_reference/preamble.js.html#ccall) and 
-[`cwrap`](https://kripken.github.io/emscripten-site/docs/api_reference/preamble.js.html#cwrap). As directly
-calling the C API is cumbersome, an additional API — called Easy API — is provided for most functions.
+[`cwrap`](https://kripken.github.io/emscripten-site/docs/api_reference/preamble.js.html#cwrap)
+functions provided by emscripten. As directly calling the C API is cumbersome,
+an additional API — called Easy API — is provided for most functions.
 
 [![npm version](https://badge.fury.io/js/liblouis-js.svg)](https://www.npmjs.com/package/liblouis-js)
 [![Bower version](https://badge.fury.io/bo/liblouis-js.svg)](https://bower.io/search/?q=liblouis-js)
