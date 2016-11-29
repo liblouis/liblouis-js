@@ -6,7 +6,7 @@ using the [`ccall`](https://kripken.github.io/emscripten-site/docs/api_reference
 by using the optional javascript API exposed by the file `easy_wrapper.js`.
 
 [![npm version](https://badge.fury.io/js/liblouis-js.svg)](https://www.npmjs.com/package/liblouis-js)
-[![Bower version](https://badge.fury.io/bo/liblouis-js.svg)](https://www.npmjs.com/package/liblouis-js)
+[![Bower version](https://badge.fury.io/bo/liblouis-js.svg)](https://bower.io/search/?q=liblouis-js)
 
 | File             | Filesize | Description                | Version\*                  |
 |------------------|----------|----------------------------|--------------------------|
