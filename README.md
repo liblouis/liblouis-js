@@ -1,12 +1,34 @@
 These are unoffical "javascript bindings" to liblouis created by cross
 compiling [liblouis](https://github.com/liblouis/liblouis) using
-[emscripten](http://emscripten.org/). Liblouis can be directly called
+[emscripten](http://emscripten.org/). The official Liblouis API written in C can be directly called
 using the [`ccall`](https://kripken.github.io/emscripten-site/docs/api_reference/preamble.js.html#ccall) and 
-[`cwrap`](https://kripken.github.io/emscripten-site/docs/api_reference/preamble.js.html#cwrap) functions or
-by using the optional javascript API exposed by the file `easy_wrapper.js`.
+[`cwrap`](https://kripken.github.io/emscripten-site/docs/api_reference/preamble.js.html#cwrap). As directly
+calling the C API is cumbersome, an additional API — called Easy API — is provided for most functions.
 
 [![npm version](https://badge.fury.io/js/liblouis-js.svg)](https://www.npmjs.com/package/liblouis-js)
 [![Bower version](https://badge.fury.io/bo/liblouis-js.svg)](https://bower.io/search/?q=liblouis-js)
+
+---
+
+<p align=center><strong>Table of Contents</strong></p>
+
+1. [API Overview](#api-overview)
+	1. [List of Builds Contained in This Repository](#list-of-builds-contained-in-this-repository)
+	2. [List of Available Liblouis Functions](#list-of-available-liblouis-functions)
+	3. [Compiling the Latest Version of Liblouis](#compiling-the-latest-version-of-liblouis)
+2. [Usage Examples](#usage-examples)
+	1. [Printing the Version Number Using the Easy API](#printing-the-version-number-using-the-easy-api)
+	2. [Printing the Version Number By Directly Calling Liblouis](#printing-the-version-number-by-directly-calling-liblouis)
+	3. [Translating and Back-Translating a String Using the Easy API](#translating-and-back-translating-a-string-using-the-easy-api)
+	4. [Downloading-Table-Files-on-Demand](#downloading-table-files-on-demand)
+	5. [Debugging and Adjusting the Log Level](#debugging-and-adjusting-the-log-level)
+3. [Changelog](#changelog)
+
+---
+
+# API Overview
+
+###List of Builds Contained in this repository
 
 | File             | Filesize | Description                | Version\*                  |
 |------------------|----------|----------------------------|--------------------------|
@@ -18,9 +40,10 @@ the file. The comparison operator and version number are relative to the commit
 tagged with the given version, e.g.  `> 3.0.0` is to be read as *newer than the
 commit tagged as version 3.0.0*.
 
-# API Overview
 
-| Method           | Easy wrapper | Direct call |
+###List of Available Liblouis Functions
+
+| Method           | Easy API | Direct Call API |
 |------------------|--------------|-------------|
 | `lou_version` | ✔ | ✔ |
 | `lou_translateString` | ✔* | ✔ |
@@ -47,32 +70,45 @@ commit tagged as version 3.0.0*.
 
 <small>* only [BMP](https://en.wikipedia.org/wiki/Plane_(Unicode)#Basic_Multilingual_Plane) tested</small>
 
+###Compiling the Latest Version of Liblouis
+
 # Usage Examples
 
-### Printing the version number of liblouis using the API and the direct-call-API 
-Include one of the `liblouis-*.js` files first. Afterwards you can optionally
-include `easy_wrapper.js`.
+### Printing the Version Number Using the Easy API
+
+Include one of the `liblouis-*.js` files first and `easy\_wrapper.js` second.
 
 ```js
 <!doctype html>
 
-<script src="liblouis-tables-embeded.js"></script>
+<script src="liblouis-no-tables.js"></script>
 <script src="easy_wrapper.js"></script>
 
 <script>
-// Using easy_wrapper.js:
 console.info("Liblouis Version:", liblouis.version());
 // Should print:
 // Liblouis Version: 3.0.0
+</script>
+```
 
-// Using liblouis-(...).js directly:
+### Printing the Version Number By Directly Calling Liblouis
+
+Include one of the `liblouis-\*.js` files.
+
+```js
+<!doctype html>
+
+<script src="liblouis-no-tables.js"></script>
+
+<script>
 console.info("Liblouis Version:", Module.ccall("lou_version", "string"));
 // Should print:
 // Liblouis Version: 3.0.0
 </script>
 ```
 
-### Translating and backtranslating a string using the javascript API
+### Translating and Back-Translating a String Using the Easy API
+
 ```js
 var unicode_braille = liblouis.translateString("tables/unicode.dis,tables/de-de-g0.utb", "10 Ziegen")
 // Variable should contain:
@@ -87,8 +123,9 @@ displayed in your browser or text editor.</small>
 
 ### Downloading Table Files on Demand
 
-After including `liblouis-no-tables.js` and `easy_wrapper.js` call with an absolute or
-relative URL to the table directory:
+After including `liblouis-no-tables.js` and `easy\_wrapper.js` call
+`enableOnDemandTableLoading` with an absolute or relative URL to the table
+directory:
 
 ```js
 // enable and set base url for tables
@@ -104,7 +141,7 @@ var unicode_braille = liblouis.translateString("tables/unicode.dis,tables/de-de-
 Note that you have to run liblouis in a worker thread for
 `enableOnDemandTableLoading` to work.
 
-### Debugging and Adjusting the log level
+### Debugging and Adjusting the Log Level
 
 The available log levels are [listed in the liblouis
 documentation](http://liblouis.org/documentation/liblouis.html#lou_005fsetLogLevel).
