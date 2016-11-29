@@ -73,11 +73,31 @@ commit tagged as version 3.0.0*.
 
 ###Compiling the Latest Version of Liblouis
 
+```
+# obtain the latest version
+git clone https://github.com/liblouis/liblouis.git
+cd liblouis
+
+# build
+./autogen.sh
+emconfigure ./configure
+emmake make
+
+emcc liblouis/.libs/liblouis.so -s RESERVED_FUNCTION_POINTERS=1 -s\
+EXPORTED_FUNCTIONS="['_lou_version', '_lou_translateString', '_lou_translate',\
+'_lou_backTranslateString', '_lou_backTranslate', '_lou_hyphenate',\
+'_lou_compileString', '_lou_getTypeformForEmphClass', '_lou_dotsToChar',\
+'_lou_charToDots', '_lou_registerLogCallback', '_lou_setLogLevel',\
+'_lou_logFile', '_lou_logPrint', '_lou_logEnd', '_lou_setDataPath',\
+'_lou_getDataPath', '_lou_getTable', '_lou_checkTable',\
+'_lou_readCharFromFile', '_lou_free', '_lou_charSize']"  -o liblouis.js
+```
+
 # Usage Examples
 
 ### Printing the Version Number Using the Easy API
 
-Include one of the `liblouis-*.js` files first and `easy\_wrapper.js` second.
+Include one of the `liblouis-*.js` files first and `easy_wrapper.js` second.
 
 ```js
 <!doctype html>
@@ -94,7 +114,7 @@ console.info("Liblouis Version:", liblouis.version());
 
 ### Printing the Version Number By Directly Calling Liblouis
 
-Include one of the `liblouis-\*.js` files.
+Include one of the `liblouis-*.js` files.
 
 ```js
 <!doctype html>
@@ -124,7 +144,7 @@ displayed in your browser or text editor.</small>
 
 ### Downloading Table Files on Demand
 
-After including `liblouis-no-tables.js` and `easy\_wrapper.js` call
+After including `liblouis-no-tables.js` and `easy_wrapper.js` call
 `enableOnDemandTableLoading` with an absolute or relative URL to the table
 directory:
 
@@ -140,7 +160,7 @@ var unicode_braille = liblouis.translateString("tables/unicode.dis,tables/de-de-
 ```
 
 Note that you have to run liblouis in a worker thread for
-`enableOnDemandTableLoading` to work.
+`enableOnDemandTableLoading` to work [1].
 
 ### Debugging and Adjusting the Log Level
 
@@ -148,7 +168,7 @@ The available log levels are [listed in the liblouis
 documentation](http://liblouis.org/documentation/liblouis.html#lou_005fsetLogLevel).
 The log level constants can be accessed using `liblouis.LOG[levelname]`. The
 default log level of liblouis is `liblouis.LOG.INFO`. The log messages of enabled
-log levels are shown in the javascript console by default [1].
+log levels are shown in the javascript console by default [2].
 
 ```js
 // log everything including debug messages
@@ -190,7 +210,11 @@ __Release 0.3.0:__ Initial public release
 
 __Footnotes__
 
-[1] Liblouis writes messages to stdout and stderr by default. Emscripten
+[1] Emscripten requires the files to be loaded synchroniously. Synchronous XHR,
+used to fetch the files, is deprecated in the main thread as it blocks all
+user interaction.
+ 
+[2] Liblouis writes messages to stdout and stderr by default. Emscripten
 redirects these to `Module.print` and `Module.printErr`, which are implemented
 as: `function print(x) { console.log(x); }` and `function printErr(x) {
 console.warn(x); }`. There is no need to overwrite these functions. You can use
