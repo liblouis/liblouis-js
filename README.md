@@ -93,6 +93,9 @@ EXPORTED_FUNCTIONS="['_lou_version', '_lou_translateString', '_lou_translate',\
 '_lou_readCharFromFile', '_lou_free', '_lou_charSize']"  -o liblouis.js
 ```
 
+To include a list of table files or a directory containing table files use the [`--embed-file`
+flag](https://kripken.github.io/emscripten-site/docs/porting/files/packaging_files.html#packaging-using-emcc).
+
 # Usage Examples
 
 ### Printing the Version Number Using the Easy API
@@ -152,7 +155,7 @@ directory:
 // enable and set base url for tables
 liblouis.enableOnDemandTableLoading("tables/");
 
-// call any API (direct call or using the easy-wrapper) method:
+// call any API (direct call API or easy API) method:
 var unicode_braille = liblouis.translateString("tables/unicode.dis,tables/de-de-g0.utb", "10 Ziegen")
 // Makes 12 XHR-Requests for table files. The variable should contain the same
 // content as above:
@@ -204,7 +207,7 @@ liblouis.registerLogCallback(null);
 __Release 0.1.0:__ Adding `libouis.setLogLevel` and `liblouis.registerLogCallback`;
 updating liblouis builds to commit `db2a361`.
 
-__Release 0.3.0:__ Initial public release
+__Release 0.0.3:__ Initial public release
 
 <hr>
 
@@ -219,4 +222,6 @@ redirects these to `Module.print` and `Module.printErr`, which are implemented
 as: `function print(x) { console.log(x); }` and `function printErr(x) {
 console.warn(x); }`. There is no need to overwrite these functions. You can use
 `liblouis#registerLogCallback(int logLevel, string msg)`, which additionally
-exposes the log level.
+exposes the log level. The Easy API registers a log callback by default, which
+maps each message level to the correct `console` method, e.g. liblouis warning
+messages to `console.warn` and liblouis fatal errors to `console.error`.

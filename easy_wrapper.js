@@ -8,24 +8,14 @@
 
 var TABLE_URL = '';
 
-//function file_exists(path) {
-	//try {
-		//FS.lookupPath(path);
-	//} catch(e) {
-		//return false;
-	//}
-
-	//return true;
-//}
-
 var FS_ORIGINAL_LOOKUP = FS.lookup;
+
 var FS_DYNAMIC_LOOKUP = function dynloader(parent, name) {
 	FS.lookup = FS_ORIGINAL_LOOKUP;
 
 	var res;
 
-	if(/*!file_exists(parent + name) &&*/
-		/(\.cti|\.ctb|\.utb|\.dis|\.uti)$/.test(name)) {
+	if(/(\.cti|\.ctb|\.utb|\.dis|\.uti)$/.test(name)) {
 		var url = TABLE_URL + name;
 		res = FS.createLazyFile(parent, name, url, true, true);
 	} else {
@@ -38,8 +28,11 @@ var FS_DYNAMIC_LOOKUP = function dynloader(parent, name) {
 
 ns.liblouis = {
 	version: Module.cwrap('lou_version', 'string'),
-
 	setLogLevel: Module.cwrap('lou_setLogLevel', 'number'),
+	getTable: Module.cwrap('lou_getTable', 'number', ['string']),
+	checkTable: Module.cwrap('lou_checkTable', 'number', ['string']),
+	free: Module.cwrap('lou_free'),
+	charSize: Module.cwrap('lou_charSize', 'number'),
 
 	registerLogCallback: function(fn) {
 
@@ -47,14 +40,13 @@ ns.liblouis = {
 			Runtime.removeFunction(ns._log_callback_fn_pointer);
 		}
 
-		if(fn !== null) {
-			ns._log_callback_fn_pointer = Runtime.addFunction(function(logLvl, msg) {
-				fn(logLvl, Pointer_stringify(msg));
-			});
-		} else {
-			ns._log_callback_fn_pointer = null;
+		if(fn === null) {
+			fn = easyApiDefaultLogCallback;
 		}
 
+		ns._log_callback_fn_pointer = Runtime.addFunction(function(logLvl, msg) {
+			fn(logLvl, Pointer_stringify(msg));
+		});
 
 		Module.ccall('lou_registerLogCallback', 'void', ['pointer'],
 				[ns._log_callback_fn_pointer]);
@@ -113,12 +105,6 @@ ns.liblouis = {
 		return String.fromCharCode.apply(null, outstr_buff);
 	},
 
-	getTable: Module.cwrap('lou_getTable', 'number', ['string']),
-	checkTable: Module.cwrap('lou_checkTable', 'number', ['string']),
-
-	free: Module.cwrap('lou_free'),
-	charSize: Module.cwrap('lou_charSize', 'number'),
-
 	loadTable: function(tablename, url) {
 		FS.createPreloadedFile('/', tablename, url, true, true);
 	},
@@ -128,11 +114,35 @@ ns.liblouis = {
 		FS.lookup = FS_DYNAMIC_LOOKUP;
 	},
 
-	disableOnDemandTableLoading: function(tableurl) {
-		TABLE_URL = tableurl;
+	disableOnDemandTableLoading: function() {
 		FS.lookup = FS_ORIGINAL_LOOKUP;
 	}
 };
+
+var _CONSOLE_MAPPING = {
+	ALL: "log",
+	DEBUG: "log",
+	INFO: "info",
+	WARN: "warn",
+	ERROR: "error",
+	FATAL: "error",
+};
+
+function easyApiDefaultLogCallback(lvl_id, msg) {
+	var lvl_name = ns.liblouis.LOG[lvl_id];
+	msg = "["+lvl_name+"] " + msg;
+
+	if(console) {
+		var fn = console[_CONSOLE_MAPPING[lvl_name]];
+		if(fn) {
+			fn(msg);
+		} else {
+			console.log(msg);
+		}
+	}
+}
+
+ns.liblouis.registerLogCallback(easyApiDefaultLogCallback);
 
 ns.liblouis.LOG = {};
 ns.liblouis.LOG[ns.liblouis.LOG.ALL   =     0] = "ALL";
