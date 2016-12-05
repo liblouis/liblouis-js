@@ -25,7 +25,7 @@ supports NodeJS and browser environments.
 	4. [Translating and Back-Translating a String Using the Easy API](#translating-and-back-translating-a-string-using-the-easy-api)
 	5. [Downloading Table Files on Demand](#downloading-table-files-on-demand)
 	6. [Debugging and Adjusting the Log Level](#debugging-and-adjusting-the-log-level)
-	7. [Persisting Log Files in NodeJS](#persisting-log-files-in-nodejs)
+	7. [Persisting Log Files in NodeJS using Deprecated Liblouis Log Functions](#persisting-log-files-in-nodejs-using-deprecated-liblouis-log-functions)
 	8. [Usage with Typescript](#usage-with-typescript)
 3. [Changelog](#changelog)
 3. [Licensing](#licensing)
@@ -65,9 +65,9 @@ commit tagged as version 3.0.0*.
 | `lou_charToDots` | ✖ | ✔ |
 | `lou_registerLogCallback` | ✔ | ✔ |
 | `lou_setLogLevel` | ✔ | ✔ |
-| `lou_logFile` | ✖ | ✔ |
+| `lou_logFile` | ✖\*\* | ✔ |
 | `lou_logPrint` | ✖\*\* | ✔ |
-| `lou_logEnd` | ✖ | ✔ |
+| `lou_logEnd` | ✖\*\* | ✔ |
 | `lou_setDataPath` | ✖ | ✔ |
 | `lou_getDataPath` | ✖ | ✔ |
 | `lou_getTable` | ✔ | ✔ |
@@ -78,7 +78,8 @@ commit tagged as version 3.0.0*.
 
 \* only [BMP](https://en.wikipedia.org/wiki/Plane_(Unicode)#Basic_Multilingual_Plane) tested
 
-\*\* `lou_logPrint` will not be implemented as it is deprecated.
+\*\* `lou_logPrint`, `lou_logFile` and `lou_logEnd` will not be implemented as
+they are deprecated.
 
 ###Compiling the Latest Version of Liblouis
 
@@ -224,23 +225,56 @@ liblouis.registerLogCallback(function(logLevel, msg){
 // remove the custom message handler and use the default message handler
 liblouis.registerLogCallback(null);
 ```
-### Persisting Log Files in NodeJS
+### Persisting Log Files in NodeJS using Deprecated Liblouis Log Functions
 
-__Upcoming in release 0.2.0.__ To create a folder of log files, that is persisted
-on the hard drive, you can use the NODEFS file system provided emscripten.
-Simply mount an existing folder and write to it:
+The following example creates a log file, that is persisted on the hard drive.
+Note that the functions of liblouis called below (`lou_logFile`, `lou_logPrint`
+and `lou_logEnd`) are all deprecated. The example only demonstrates how
+liblouis can be called directly from nodeJS. In production systems, you should
+consider implementing your own log functionality using `registerLogCallback`.
 
 ```js
 const path = require('path');
-const liblouis = require('liblouis');
+const capi = require('./liblouis-no-tables');
+const easyapi = require('./easy-api');
+easyapi.setLiblouisBuild(capi);
 
+// map a directory on the machine to a virtual directory of emscripten:
 var hdd_directory = path.resolve(__dirname, 'logs/');
 
 FS.mkdir('/logs');
-liblouis.getFilesystem().mount(FS.mount(NODEFS, { root: hdd_directory }, '/logs');
+liblouis.getFilesystem().mount(NODEFS, { root: hdd_directory }, '/logs');
 
-liblouis.logFile('/logs/liblouis.txt');
+// log all messages:
+easyapi.setLogLevel(easyapi.LOG.ALL);
+
+// enable liblouis' deprecated "log to file"-functionality:
+capi.ccall('lou_logFile', 'void', ['string'], ['/logs/liblouis.txt']); 
+
+// map the new log functionality of liblouis to the deprecated log
+// functionality:
+easyapi.registerLogCallback(function(i, str) {
+	capi.ccall('lou_logPrint', 'void', ['string'], [str]);
+});
+
+// do something that logs messages:
+easyapi.translateString("tables/unicode.dis,tables/de-de-g0.utb", "10 Ziegen");
+
+// Example log file contents are now:
+// ----------------------------------
+
+// Performing translation: tableList=tables/unicode.dis,tables/de-de-g0.utb, inlen=38
+// Inbuf=0x0031 0x0030 0x0020 0x005A 0x0069 0x0065 0x0067 0x0065 0x006E 0x0000
+// 0x0000 0x0000 0x0000 0x0000 0x0000 0x0000 0x0000 0x0000 0x0000 0x0000 0x0000
+// 0x0000 0x0033 0x0000 0x0000 0x0000 0x0000 0x0000 0x0000 0x0000 0x0000 0x0000
+// 0x0000 0x0000 0x0000 0x0000 0x0000 0x0000 ~ 10 Ziegen
+// Cannot resolve table 'tables/unicode.dis'
+// 1 errors found.
+// tables/unicode.dis,tables/de-de-g0.utb could not be found
 ```
+
+The log file is created if it does not exist. If it exists, new log messages
+are appended to the end of the file.
 
 ### Usage with Typescript
 

@@ -1,7 +1,8 @@
 /*globals
 	Module,
 	FS,
-	stringToUTF16
+	stringToUTF16,
+	Pointer_stringify
 */
 
 (function ( root, factory ) {
@@ -16,6 +17,9 @@
         factory((root.commonJsStrict = {}));
     }
 }(this, function(liblouis) { "use strict";
+
+var isBrowser = new Function("try {return this===window;}catch(e){ return false;}");
+var isNode = !isBrowser;
 
 var capi;
 
@@ -49,6 +53,10 @@ liblouis.setLiblouisBuild = function setLiblouisBuild(_capi) {
 		liblouis.registerLogCallback(null);
 	}
 
+	if(isNode) {
+		this.enableOnDemandTableLoading("tables/");
+	}
+
 	FS_ORIGINAL_LOOKUP = capi.FS.lookup;
 };
 
@@ -58,6 +66,8 @@ liblouis.getTable = function(str) { return capi.ccall('lou_getTable', 'number', 
 liblouis.checkTable = function(str) { return capi.ccall('lou_checkTable', 'number', ['string'], [str]); };
 liblouis.free = function() { return capi.ccall('lou_free', 'void', [], []); };
 liblouis.charSize = function() { return capi.ccall('lou_charSize', 'number', [], []); };
+liblouis.logFile = function(str) { return capi.ccall('lou_logFile', 'void', ['string'], [str]); };
+liblouis.getFilesystem = function() { return capi.FS; };
 
 liblouis.registerLogCallback = function(fn) {
 
@@ -70,7 +80,7 @@ liblouis.registerLogCallback = function(fn) {
 	}
 
 	liblouis._log_callback_fn_pointer = capi.Runtime.addFunction(function(logLvl, msg) {
-		fn(logLvl, Pointer_stringify(msg));
+		fn(logLvl, capi.Pointer_stringify(msg));
 	});
 
 	capi.ccall('lou_registerLogCallback', 'void', ['pointer'],
@@ -97,7 +107,7 @@ liblouis.translateString = function(table, inbuf, backtranslate) {
 	// TODO: internally no conversion is done, only copies values
 	// to memory, which is okay for BMP
 	// TODO: this writes an unnecessary null byte
-	stringToUTF16(inbuf, inbuff_ptr, bufflen);
+	capi.stringToUTF16(inbuf, inbuff_ptr, bufflen);
 
 	// in emscripten we need a 32bit cell for each pointer
 	var bufflen_ptr = capi._malloc(4);
@@ -140,7 +150,13 @@ liblouis.loadTable = function(tablename, url) {
 
 liblouis.enableOnDemandTableLoading = function(tableurl) {
 	TABLE_URL = tableurl;
-	capi.FS.lookup = FS_DYNAMIC_LOOKUP;
+	if(isNode) {
+		capi.FS.lookup = FS_DYNAMIC_LOOKUP;
+	} else {
+		FS.mkdir('/tables');
+		var path = require('path');
+		FS.mount(NODEFS, { root: path.resolve(__dirname, "tables/") }, tableurl);
+	}
 };
 
 liblouis.disableOnDemandTableLoading = function() {
@@ -166,7 +182,7 @@ liblouis.LOG[liblouis.LOG.FATAL = 50000] = "FATAL";
 liblouis.LOG[liblouis.LOG.OFF   =  6000] = "OFF";
 
 function easyApiDefaultLogCallback(lvl_id, msg) {
-	var lvl_name = ns.liblouis.LOG[lvl_id];
+	var lvl_name = liblouis.LOG[lvl_id];
 	msg = "["+lvl_name+"] " + msg;
 
 	if(console) {
