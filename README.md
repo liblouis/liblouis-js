@@ -54,9 +54,9 @@ commit tagged as version 3.0.0*.
 | Method           | Easy API | Direct Call API |
 |------------------|--------------|-------------|
 | `lou_version` | ✔ | ✔ |
-| `lou_translateString` | ✔* | ✔ |
+| `lou_translateString` | ✔\* | ✔ |
 | `lou_translate` | ✖ | ✔ |
-| `lou_backTranslateString` | ✔* | ✔ |
+| `lou_backTranslateString` | ✔\* | ✔ |
 | `lou_backTranslate` | ✖ | ✔ |
 | `lou_hyphenate` | ✖ | ✔ |
 | `lou_compileString` | ✖ | ✔ |
@@ -66,7 +66,7 @@ commit tagged as version 3.0.0*.
 | `lou_registerLogCallback` | ✔ | ✔ |
 | `lou_setLogLevel` | ✔ | ✔ |
 | `lou_logFile` | ✖ | ✔ |
-| `lou_logPrint` | ✖ | ✔ |
+| `lou_logPrint` | ✖\*\* | ✔ |
 | `lou_logEnd` | ✖ | ✔ |
 | `lou_setDataPath` | ✖ | ✔ |
 | `lou_getDataPath` | ✖ | ✔ |
@@ -76,7 +76,9 @@ commit tagged as version 3.0.0*.
 | `lou_free` | ✔ | ✔ |
 | `lou_charSize` | ✔ | ✔ |
 
-<small>* only [BMP](https://en.wikipedia.org/wiki/Plane_(Unicode)#Basic_Multilingual_Plane) tested</small>
+\* only [BMP](https://en.wikipedia.org/wiki/Plane_(Unicode)#Basic_Multilingual_Plane) tested
+
+\*\* `lou_logPrint` will not be implemented as it is deprecated.
 
 ###Compiling the Latest Version of Liblouis
 
@@ -224,15 +226,47 @@ liblouis.registerLogCallback(null);
 ```
 ### Persisting Log Files in NodeJS
 
-Upcoming in release 0.2.0.
+__Upcoming in release 0.2.0.__ To create a folder of log files, that is persisted
+on the hard drive, you can use the NODEFS file system provided emscripten.
+Simply mount an existing folder and write to it:
+
+```js
+const path = require('path');
+const liblouis = require('liblouis');
+
+var hdd_directory = path.resolve(__dirname, 'logs/');
+
+FS.mkdir('/logs');
+liblouis.getFilesystem().mount(FS.mount(NODEFS, { root: hdd_directory }, '/logs');
+
+liblouis.logFile('/logs/liblouis.txt');
+```
 
 ### Usage with Typescript
 
-Upcoming in release 0.2.0.
+__Upcoming in release 0.2.0.__
 
 ### Switching between Builds
 
-Upcoming in release 0.2.0.
+__Upcoming in release 0.2.0.__ Switching between builds is supported in nodeJS
+and the browser. The example below uses nodeJS:
+
+```js
+const build_1 = require('./liblouis-no-tables');
+const build_2 = require('./liblouis-tables-embeded');
+
+// In nodeJS, liblouis-js uses 'liblouis-no-tables' by default, which is
+// included as build_1 above
+const liblouis = require('liblouis');
+
+// use a liblouis build with embeded tables instead:
+liblouis.setLiblouisBuild(build_2);
+
+// switch back to the default liblouis build
+liblouis.setLiblouisBuild(build_1);
+```
+
+Settings like `registerLogCallback` are automatically applied to new build.
 
 # Changelog
 
