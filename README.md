@@ -19,12 +19,16 @@ supports NodeJS and browser environments.
 	2. [List of Available Liblouis Functions](#list-of-available-liblouis-functions)
 	3. [Compiling the Latest Version of Liblouis](#compiling-the-latest-version-of-liblouis)
 2. [Usage Examples](#usage-examples)
-	1. [Printing the Version Number Using the Easy API](#printing-the-version-number-using-the-easy-api)
-	2. [Printing the Version Number By Directly Calling Liblouis](#printing-the-version-number-by-directly-calling-liblouis)
-	3. [Translating and Back-Translating a String Using the Easy API](#translating-and-back-translating-a-string-using-the-easy-api)
-	4. [Downloading Table Files on Demand](#downloading-table-files-on-demand)
-	5. [Debugging and Adjusting the Log Level](#debugging-and-adjusting-the-log-level)
+	1. [Printing the Version Number Using the Easy API in the Browser](#printing-the-version-number-using-the-easy-api-in-the-browser)
+	2. [Printing the Version Number By Directly Calling Liblouis in the Browser](#printing-the-version-number-by-directly-calling-liblouis-in-the-browser)
+	3. [Printing the Version Number Using the Easy API in NodeJS](#printing-the-version-number-using-the-easy-api-in-nodejs)
+	4. [Translating and Back-Translating a String Using the Easy API](#translating-and-back-translating-a-string-using-the-easy-api)
+	5. [Downloading Table Files on Demand](#downloading-table-files-on-demand)
+	6. [Debugging and Adjusting the Log Level](#debugging-and-adjusting-the-log-level)
+	7. [Persisting Log Files in NodeJS](#persisting-log-files-in-nodejs)
+	8. [Usage with Typescript](#usage-with-typescript)
 3. [Changelog](#changelog)
+3. [Licensing](#licensing)
 
 ---
 
@@ -134,7 +138,7 @@ console.info("Liblouis Version:", Module.ccall("lou_version", "string"));
 </script>
 ```
 
-### Printing the Version Number in NodeJS
+### Printing the Version Number Using the Easy API in NodeJS
 
 Using `require` includes the Easy API, liblouis without tables and mounts the
 `tables` folder as `tables`.
@@ -143,10 +147,8 @@ Using `require` includes the Easy API, liblouis without tables and mounts the
 const liblouis = require("liblouis");
 
 console.info("Liblouis Version using Easy API:", liblouis.version());
-console.info("Liblouis Version using direct call API:", Module.ccall("lou_version", "string"));
 // Should print:
 // Liblouis Version using Easy API: 3.0.0
-// Liblouis Version using direct call API: 3.0.0
 </script>
 ```
 
@@ -222,13 +224,21 @@ liblouis.registerLogCallback(null);
 ```
 ### Persisting Log Files in NodeJS
 
+Upcoming in release 0.2.0.
+
 ### Usage with Typescript
+
+Upcoming in release 0.2.0.
+
+### Switching between Builds
+
+Upcoming in release 0.2.0.
 
 # Changelog
 
-__Release 0.2.0:__ Adding support for NodeJS; Adding type definitions for
-Typescript; Updating `./tables` folder to commit `db2a361` (Bug #); Renaming
-easy api file to `easy-api.js`.
+__Release 0.2.0:__ Adding support for nodeJS (Issue #10, #11) and commonJS;
+Adding type definitions for Typescript; Updating `./tables` folder to commit
+`db2a361` (Issue #12); Renaming easy api file to `easy-api.js`.
 
 __Release 0.1.0:__ Adding `libouis.setLogLevel` and `liblouis.registerLogCallback`;
 updating liblouis builds to commit `db2a361`.
