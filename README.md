@@ -4,7 +4,8 @@ compiling [liblouis](https://github.com/liblouis/liblouis) using
 using the [`ccall`](https://kripken.github.io/emscripten-site/docs/api_reference/preamble.js.html#ccall) and 
 [`cwrap`](https://kripken.github.io/emscripten-site/docs/api_reference/preamble.js.html#cwrap)
 functions provided by emscripten. As directly calling the C API is cumbersome,
-an additional API — called Easy API — is provided for most functions.
+an additional API — called Easy API — is provided for most functions. This package
+supports NodeJS and browser environments.
 
 [![npm version](https://badge.fury.io/js/liblouis-js.svg)](https://www.npmjs.com/package/liblouis-js)
 [![Bower version](https://badge.fury.io/bo/liblouis-js.svg)](https://bower.io/search/?q=liblouis-js)
@@ -21,7 +22,7 @@ an additional API — called Easy API — is provided for most functions.
 	1. [Printing the Version Number Using the Easy API](#printing-the-version-number-using-the-easy-api)
 	2. [Printing the Version Number By Directly Calling Liblouis](#printing-the-version-number-by-directly-calling-liblouis)
 	3. [Translating and Back-Translating a String Using the Easy API](#translating-and-back-translating-a-string-using-the-easy-api)
-	4. [Downloading-Table-Files-on-Demand](#downloading-table-files-on-demand)
+	4. [Downloading Table Files on Demand](#downloading-table-files-on-demand)
 	5. [Debugging and Adjusting the Log Level](#debugging-and-adjusting-the-log-level)
 3. [Changelog](#changelog)
 
@@ -33,13 +34,15 @@ an additional API — called Easy API — is provided for most functions.
 
 | File             | Filesize | Description                | Version\*                  |
 |------------------|----------|----------------------------|--------------------------|
-| `liblouis-tables-embeded.js`    | 29.8MB   | All tables embeded in file | commit db2a361 (> 3.0.0) |
-| `liblouis-no-tables.js`    | 1.47MB   | Tables not included | commit db2a361 (> 3.0.0) |
+| `liblouis-tables-embeded.js`    | 29.8MB   | All tables embeded in file\*\* | commit db2a361 (> 3.0.0) |
+| `liblouis-no-tables.js`    | 1.47MB   | Tables not included\*\*\* | commit db2a361 (> 3.0.0) |
 
 \* shown is the commit's shortend hash of the liblouis version used to compile
 the file. The comparison operator and version number are relative to the commit
 tagged with the given version, e.g.  `> 3.0.0` is to be read as *newer than the
 commit tagged as version 3.0.0*.
+\*\* tables are available as `tables/{tablename}.{tableextension}`.
+\*\*\* the `tables/` folder in this repository has version _commit db2a361 (>3.0.0)_
 
 
 ###List of Available Liblouis Functions
@@ -90,7 +93,7 @@ EXPORTED_FUNCTIONS="['_lou_version', '_lou_translateString', '_lou_translate',\
 '_lou_charToDots', '_lou_registerLogCallback', '_lou_setLogLevel',\
 '_lou_logFile', '_lou_logPrint', '_lou_logEnd', '_lou_setDataPath',\
 '_lou_getDataPath', '_lou_getTable', '_lou_checkTable',\
-'_lou_readCharFromFile', '_lou_free', '_lou_charSize']"  -o liblouis.js
+'_lou_readCharFromFile', '_lou_free', '_lou_charSize']" --post-js ./inc/post.js -o liblouis.js
 ```
 
 To include a list of table files or a directory containing table files use the [`--embed-file`
@@ -98,15 +101,15 @@ flag](https://kripken.github.io/emscripten-site/docs/porting/files/packaging_fil
 
 # Usage Examples
 
-### Printing the Version Number Using the Easy API
+### Printing the Version Number Using the Easy API in the Browser
 
-Include one of the `liblouis-*.js` files first and `easy_wrapper.js` second.
+Include one of the `liblouis-*.js` files first and `easy-api.js` second.
 
 ```js
 <!doctype html>
 
 <script src="liblouis-no-tables.js"></script>
-<script src="easy_wrapper.js"></script>
+<script src="easy-api.js"></script>
 
 <script>
 console.info("Liblouis Version:", liblouis.version());
@@ -115,7 +118,7 @@ console.info("Liblouis Version:", liblouis.version());
 </script>
 ```
 
-### Printing the Version Number By Directly Calling Liblouis
+### Printing the Version Number By Directly Calling Liblouis in the Browser
 
 Include one of the `liblouis-*.js` files.
 
@@ -128,6 +131,22 @@ Include one of the `liblouis-*.js` files.
 console.info("Liblouis Version:", Module.ccall("lou_version", "string"));
 // Should print:
 // Liblouis Version: 3.0.0
+</script>
+```
+
+### Printing the Version Number in NodeJS
+
+Using `require` includes the Easy API, liblouis without tables and mounts the
+`tables` folder as `tables`.
+
+```js
+const liblouis = require("liblouis");
+
+console.info("Liblouis Version using Easy API:", liblouis.version());
+console.info("Liblouis Version using direct call API:", Module.ccall("lou_version", "string"));
+// Should print:
+// Liblouis Version using Easy API: 3.0.0
+// Liblouis Version using direct call API: 3.0.0
 </script>
 ```
 
@@ -147,7 +166,7 @@ displayed in your browser or text editor.</small>
 
 ### Downloading Table Files on Demand
 
-After including `liblouis-no-tables.js` and `easy_wrapper.js` call
+After including `liblouis-no-tables.js` and `easy-api.js` call
 `enableOnDemandTableLoading` with an absolute or relative URL to the table
 directory:
 
@@ -201,13 +220,34 @@ liblouis.registerLogCallback(function(logLevel, msg){
 // remove the custom message handler and use the default message handler
 liblouis.registerLogCallback(null);
 ```
+### Persisting Log Files in NodeJS
+
+### Usage with Typescript
 
 # Changelog
+
+__Release 0.2.0:__ Adding support for NodeJS; Adding type definitions for
+Typescript; Updating `./tables` folder to commit `db2a361` (Bug #); Renaming
+easy api file to `easy-api.js`.
 
 __Release 0.1.0:__ Adding `libouis.setLogLevel` and `liblouis.registerLogCallback`;
 updating liblouis builds to commit `db2a361`.
 
 __Release 0.0.3:__ Initial public release
+
+# Licensing
+
+[Emscripten is available under 2
+licenses](https://github.com/kripken/emscripten/blob/master/LICENSE), the MIT
+license and the University of Illinois/NCSA Open Source License. [Liblouis is
+licensed under
+LGPLv2.1+](https://raw.githubusercontent.com/liblouis/liblouis/master/README).
+Note that table files may have a different license. Licensing information can
+be found in the header of the individual table files.
+
+Code that is not part of liblouis and not part of emscripten is licensed under
+GPL-3.0. The text of the license can be found in the file `LICENSE` of this
+repository.
 
 <hr>
 

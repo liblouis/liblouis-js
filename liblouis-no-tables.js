@@ -52714,9 +52714,9 @@ run();
 
 
 
-
-
 // {{MODULE_ADDITIONS}}
 
 
 
+Module.FS = FS;
+Module.Runtime = Runtime;
