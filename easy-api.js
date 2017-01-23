@@ -32,7 +32,7 @@ var FS_DYNAMIC_LOOKUP = function dynloader(parent, name) {
 
 	var res;
 
-	if(/(\.cti|\.ctb|\.utb|\.dis|\.uti)$/.test(name)) {
+	if(/(\.cti|\.ctb|\.utb|\.dis|\.uti|\.tbl|\.dic)$/.test(name)) {
 		var url = TABLE_URL + name;
 		res = capi.FS.createLazyFile(parent, name, url, true, true);
 	} else {
