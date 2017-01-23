@@ -1,8 +1,7 @@
 /*globals
+	define,
 	Module,
-	FS,
-	stringToUTF16,
-	Pointer_stringify
+	WorkerGlobalScope
 */
 
 (function ( root, factory ) {
@@ -14,12 +13,13 @@
         define(['exports'], factory);
     } else {
         // Browser globals
-        factory((root.commonJsStrict = {}));
+        factory(root.liblouis = {});
     }
 }(this, function(liblouis) { "use strict";
 
-var isBrowser = new Function("try {return this===window;}catch(e){ return false;}");
-var isNode = !isBrowser;
+var isBrowserGuiThread = typeof window !== 'undefined';
+var isWebWorker = typeof WorkerGlobalScope !== 'undefined' && self instanceof WorkerGlobalScope;
+var isNode = !isBrowserGuiThread && !isWebWorker;
 
 var capi;
 
@@ -150,12 +150,12 @@ liblouis.loadTable = function(tablename, url) {
 
 liblouis.enableOnDemandTableLoading = function(tableurl) {
 	TABLE_URL = tableurl;
-	if(isNode) {
+	if(!isNode) {
 		capi.FS.lookup = FS_DYNAMIC_LOOKUP;
 	} else {
-		FS.mkdir('/tables');
+		capi.FS.mkdir('/tables');
 		var path = require('path');
-		FS.mount(NODEFS, { root: path.resolve(__dirname, "tables/") }, tableurl);
+		capi.FS.mount(capi.NODEFS, { root: path.resolve(__dirname, "tables/") }, tableurl);
 	}
 };
 
@@ -193,6 +193,10 @@ function easyApiDefaultLogCallback(lvl_id, msg) {
 			console.log(msg);
 		}
 	}
+}
+
+if(!isNode) {
+	liblouis.setLiblouisBuild(Module);
 }
 
 }));
