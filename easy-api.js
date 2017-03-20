@@ -91,6 +91,11 @@ liblouis.backTranslateString = function(table, inbuf) {
 	return liblouis.translateString(table, inbuf, true);
 };
 
+liblouis.compileString = function(table, str) {
+	var success = capi.ccall('lou_compileString', 'number', ['string', 'string'], [table, str]);
+	return !!success;
+};
+
 liblouis.translateString = function(table, inbuf, backtranslate) {
 
 	if(typeof inbuf !== "string" || inbuf.length === 0) {

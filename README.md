@@ -23,10 +23,11 @@ supports NodeJS and browser environments.
 	2. [Printing the Version Number By Directly Calling Liblouis in the Browser](#printing-the-version-number-by-directly-calling-liblouis-in-the-browser)
 	3. [Printing the Version Number Using the Easy API in NodeJS](#printing-the-version-number-using-the-easy-api-in-nodejs)
 	4. [Translating and Back-Translating a String Using the Easy API](#translating-and-back-translating-a-string-using-the-easy-api)
-	5. [Downloading Table Files on Demand](#downloading-table-files-on-demand)
-	6. [Debugging and Adjusting the Log Level](#debugging-and-adjusting-the-log-level)
-	7. [Persisting Log Files in NodeJS using Deprecated Liblouis Log Functions](#persisting-log-files-in-nodejs-using-deprecated-liblouis-log-functions)
-	8. [Usage with Typescript](#usage-with-typescript)
+	5. [Altering a Table Definition on Run-Time](#altering-a-table-definition-on-runtime)
+	6. [Downloading Table Files on Demand](#downloading-table-files-on-demand)
+	7. [Debugging and Adjusting the Log Level](#debugging-and-adjusting-the-log-level)
+	8. [Persisting Log Files in NodeJS using Deprecated Liblouis Log Functions](#persisting-log-files-in-nodejs-using-deprecated-liblouis-log-functions)
+	9. [Usage with Typescript](#usage-with-typescript)
 3. [Changelog](#changelog)
 3. [Licensing](#licensing)
 
@@ -34,7 +35,7 @@ supports NodeJS and browser environments.
 
 # API Overview
 
-###List of Builds Contained in this repository
+### List of Builds Contained in this repository
 
 | File             | Filesize | Description                | Version\*                  |
 |------------------|----------|----------------------------|--------------------------|
@@ -49,7 +50,7 @@ commit tagged as version 3.0.0*.
 \*\*\* the `tables/` folder in this repository has version _commit db2a361 (>3.0.0)_
 
 
-###List of Available Liblouis Functions
+### List of Available Liblouis Functions
 
 | Method           | Easy API | Direct Call API |
 |------------------|--------------|-------------|
@@ -59,7 +60,7 @@ commit tagged as version 3.0.0*.
 | `lou_backTranslateString` | ✔\* | ✔ |
 | `lou_backTranslate` | ✖ | ✔ |
 | `lou_hyphenate` | ✖ | ✔ |
-| `lou_compileString` | ✖ | ✔ |
+| `lou_compileString` | ✔ | ✔ |
 | `lou_getTypeformForEmphClass` | ✖ | ✔ |
 | `lou_dotsToChar` | ✖ | ✔ |
 | `lou_charToDots` | ✖ | ✔ |
@@ -81,7 +82,7 @@ commit tagged as version 3.0.0*.
 \*\* `lou_logPrint`, `lou_logFile` and `lou_logEnd` will not be implemented as
 they are deprecated.
 
-###Compiling the Latest Version of Liblouis
+### Compiling the Latest Version of Liblouis
 
 ```
 # obtain the latest version
@@ -166,8 +167,15 @@ console.log(liblouis.backTranslateString("tables/unicode.dis,tables/de-de-g0.utb
 // 10 ziegen
 ```
 
-<small>Note that the Unicode Braille Patterns in line 3 may not be
-displayed in your browser or text editor.</small>
+### Altering a Table Definition on Run-Time
+
+```js
+console.log(liblouis.translateString("tables/unicode.dis,tables/de-de-g0.utb", "1"));
+// Logs: ⠼⠁
+liblouis.compileString("tables/unicode.dis,tables/de-de-g0.utb", "numsign 123456");
+console.log(liblouis.translateString("tables/unicode.dis,tables/de-de-g0.utb", "1"));
+// Logs: ⠿⠁
+```
 
 ### Downloading Table Files on Demand
 
