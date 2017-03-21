@@ -184,7 +184,7 @@ liblouis.LOG[liblouis.LOG.INFO  = 20000] = "INFO";
 liblouis.LOG[liblouis.LOG.WARN  = 30000] = "WARN";
 liblouis.LOG[liblouis.LOG.ERROR = 40000] = "ERROR";
 liblouis.LOG[liblouis.LOG.FATAL = 50000] = "FATAL";
-liblouis.LOG[liblouis.LOG.OFF   =  6000] = "OFF";
+liblouis.LOG[liblouis.LOG.OFF   = 60000] = "OFF";
 
 function easyApiDefaultLogCallback(lvl_id, msg) {
 	var lvl_name = liblouis.LOG[lvl_id];
@@ -201,7 +201,11 @@ function easyApiDefaultLogCallback(lvl_id, msg) {
 }
 
 if(!isNode) {
-	liblouis.setLiblouisBuild(Module);
+	if(typeof liblouis_emscripten !== "undefined") {
+		liblouis.setLiblouisBuild(liblouis_emscripten);
+	} else if(typeof Module !== "undefined") {
+		liblouis.setLiblouisBuild(Module);
+	}
 }
 
 }));

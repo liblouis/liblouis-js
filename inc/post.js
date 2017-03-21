@@ -3,3 +3,7 @@ Module.Runtime = Runtime;
 Module.NODEFS = NODEFS;
 Module.stringToUTF16 = stringToUTF16;
 Module.Pointer_stringify = Pointer_stringify;
+
+ns.liblouis_emscripten = Module;
+
+})(this);

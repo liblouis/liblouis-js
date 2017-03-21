@@ -3,11 +3,11 @@
 	"description": "javascript bindings for liblouis",
 	"author": "Reiner Dolp",
 	"keywords": [ "braille", "transcription" ],
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"repository": {
 		"type": "git",
 		"url": "git://github.com/reiner-dolp/liblouis-js.git"
 	},
 	"main": "./liblouis.js",
-	"license": "GPL-3.0"
+	"license": "GPL-2.1"
 }

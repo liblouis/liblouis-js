@@ -39,15 +39,18 @@ supports NodeJS and browser environments.
 
 | File             | Filesize | Description                | Version\*                  |
 |------------------|----------|----------------------------|--------------------------|
-| `liblouis-tables-embeded.js`    | 29.8MB   | All tables embeded in file\*\* | commit db2a361 (> 3.0.0) |
-| `liblouis-no-tables.js`    | 1.47MB   | Tables not included\*\*\* | commit db2a361 (> 3.0.0) |
+| `liblouis-tables-embeded.js`    | 32.2MB   | All tables embeded in file\*\* | commit 2c849bc (> 3.1.0) |
+| `liblouis-no-tables.js`    | 1.43MB   | Tables not included\*\*\* | commit 2c849bc (> 3.1.0) |
+
+Older liblouis builds can be obtained with previous releases of this library.
+See [3].
 
 \* shown is the commit's shortend hash of the liblouis version used to compile
 the file. The comparison operator and version number are relative to the commit
-tagged with the given version, e.g.  `> 3.0.0` is to be read as *newer than the
-commit tagged as version 3.0.0*.
+tagged with the given version, e.g.  `> 3.1.0` is to be read as *newer than the
+commit tagged as version 3.1.0*.
 \*\* tables are available as `tables/{tablename}.{tableextension}`.
-\*\*\* the `tables/` folder in this repository has version _commit db2a361 (>3.0.0)_
+\*\*\* the `tables/` folder in this repository has version _commit 2c849bc (>3.1.0)_
 
 
 ### List of Available Liblouis Functions
@@ -94,14 +97,15 @@ cd liblouis
 emconfigure ./configure
 emmake make
 
-emcc liblouis/.libs/liblouis.so -s RESERVED_FUNCTION_POINTERS=1 -s\
-EXPORTED_FUNCTIONS="['_lou_version', '_lou_translateString', '_lou_translate',\
+emcc liblouis/.libs/liblouis.so -s RESERVED_FUNCTION_POINTERS=1 \
+-s EXPORTED_FUNCTIONS="['_lou_version', '_lou_translateString', '_lou_translate',\
 '_lou_backTranslateString', '_lou_backTranslate', '_lou_hyphenate',\
 '_lou_compileString', '_lou_getTypeformForEmphClass', '_lou_dotsToChar',\
 '_lou_charToDots', '_lou_registerLogCallback', '_lou_setLogLevel',\
 '_lou_logFile', '_lou_logPrint', '_lou_logEnd', '_lou_setDataPath',\
 '_lou_getDataPath', '_lou_getTable', '_lou_checkTable',\
-'_lou_readCharFromFile', '_lou_free', '_lou_charSize']" --post-js ./inc/post.js -o liblouis.js
+'_lou_readCharFromFile', '_lou_free', '_lou_charSize']" \
+--post-js ./inc/post.js --pre-js ./inc/pre.js -o liblouis.js
 ```
 
 To include a list of table files or a directory containing table files use the [`--embed-file`
@@ -122,7 +126,7 @@ Include one of the `liblouis-*.js` files first and `easy-api.js` second.
 <script>
 console.info("Liblouis Version:", liblouis.version());
 // Should print:
-// Liblouis Version: 3.0.0
+// Liblouis Version: 3.1.0
 </script>
 ```
 
@@ -138,7 +142,7 @@ Include one of the `liblouis-*.js` files.
 <script>
 console.info("Liblouis Version:", Module.ccall("lou_version", "string"));
 // Should print:
-// Liblouis Version: 3.0.0
+// Liblouis Version: 3.1.0
 </script>
 ```
 
@@ -152,7 +156,7 @@ const liblouis = require("liblouis");
 
 console.info("Liblouis Version using Easy API:", liblouis.version());
 // Should print:
-// Liblouis Version using Easy API: 3.0.0
+// Liblouis Version using Easy API: 3.1.0
 </script>
 ```
 
@@ -196,6 +200,11 @@ var unicode_braille = liblouis.translateString("tables/unicode.dis,tables/de-de-
 
 Note that you have to run liblouis in a worker thread for
 `enableOnDemandTableLoading` to work [1].
+
+You should call `enableOnDemandTableLoading` only once on initialization.
+Changing the table folder location during execution causes the filesystem to be
+inconsistent. If you have to change the folder location, reload the whole
+liblouis/emscripten instance.
 
 ### Debugging and Adjusting the Log Level
 
@@ -286,12 +295,25 @@ are appended to the end of the file.
 
 ### Usage with Typescript
 
-__Upcoming in release 0.2.0.__
+The easy api is typed and plays well with
+[typescript](https://www.typescriptlang.org) and [npm](https://www.npmjs.com/).
+
+Add the library as dependency to your `package.json` using
+
+```
+$ npm install --save liblouis-js
+```
+
+and add the following line to each file that uses liblouis
+
+```js
+/// <reference types="liblouis-js"/>
+```
 
 ### Switching between Builds
 
-__Upcoming in release 0.2.0.__ Switching between builds is supported in nodeJS
-and the browser. The example below uses nodeJS:
+Switching between builds is supported in nodeJS and the browser. The example
+below uses nodeJS:
 
 ```js
 const build_1 = require('./liblouis-no-tables');
@@ -313,8 +335,14 @@ Settings like `registerLogCallback` are automatically applied to new build.
 # Changelog
 
 __Release 0.2.0:__ Adding support for nodeJS (Issue #10, #11) and commonJS;
-Adding type definitions for Typescript; Updating `./tables` folder to commit
-`db2a361` (Issue #12); Renaming easy api file to `easy-api.js`.
+Adding type definitions for Typescript; Updates liblouis to version `2c849bc`;
+Renaming easy api file to `easy-api.js`; Implements `lou_compileString`; Support
+for build switching; Emscripten methods are no longer leaked to global scope;
+Adds Typescript support.
+
+*This release is backward compatible:* Liblouis builds for version `0.1.0` can be
+used with liblouis-js `0.2.0`.
+
 
 __Release 0.1.0:__ Adding `libouis.setLogLevel` and `liblouis.registerLogCallback`;
 updating liblouis builds to commit `db2a361`.
@@ -351,3 +379,6 @@ console.warn(x); }`. There is no need to overwrite these functions. You can use
 exposes the log level. The Easy API registers a log callback by default, which
 maps each message level to the correct `console` method, e.g. liblouis warning
 messages to `console.warn` and liblouis fatal errors to `console.error`.
+
+[3] The correspondance between liblouis versions and liblouis-js versions are
+as follows: `0.1.0 = 3.0.0 (db2a361)`, `0.2.0 = 3.1.0 (2c849bc)`.
