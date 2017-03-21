@@ -9,5 +9,6 @@
 		"url": "git://github.com/reiner-dolp/liblouis-js.git"
 	},
 	"main": "./liblouis.js",
-	"license": "GPL-2.1"
+	"types": "./liblouis.d.ts",
+	"license": "GPL-3.0"
 }
