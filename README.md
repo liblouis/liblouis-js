@@ -7,8 +7,8 @@ functions provided by emscripten. As directly calling the C API is cumbersome,
 an additional API — called Easy API — is provided for most functions. This package
 supports NodeJS and browser environments.
 
-[![npm version](https://img.shields.io/npm/v/liblouis-js.svg?colorB=0F0)](https://www.npmjs.com/package/liblouis-js)
-[![Bower version](https://img.shields.io/bower/v/liblouis-js.svg?colorB=0F0)](https://bower.io/search/?q=liblouis-js)
+[![npm version](https://img.shields.io/npm/v/liblouis-js.svg?colorB=44cc11)](https://www.npmjs.com/package/liblouis-js)
+[![Bower version](https://img.shields.io/bower/v/liblouis-js.svg?colorB=44cc11)](https://bower.io/search/?q=liblouis-js)
 
 ---
 
