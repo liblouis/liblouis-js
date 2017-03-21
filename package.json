@@ -6,7 +6,7 @@
 	"version": "0.2.0",
 	"repository": {
 		"type": "git",
-		"url": "git://github.com/reiner-dolp/liblouis-js.git"
+		"url": "git://github.com/liblouis/liblouis-js.git"
 	},
 	"main": "./liblouis.js",
 	"types": "./liblouis.d.ts",
