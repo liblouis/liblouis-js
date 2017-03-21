@@ -23,11 +23,12 @@ supports NodeJS and browser environments.
 	2. [Printing the Version Number By Directly Calling Liblouis in the Browser](#printing-the-version-number-by-directly-calling-liblouis-in-the-browser)
 	3. [Printing the Version Number Using the Easy API in NodeJS](#printing-the-version-number-using-the-easy-api-in-nodejs)
 	4. [Translating and Back-Translating a String Using the Easy API](#translating-and-back-translating-a-string-using-the-easy-api)
-	5. [Altering a Table Definition on Run-Time](#altering-a-table-definition-on-runtime)
+	5. [Altering a Table Definition on Run-Time](#altering-a-table-definition-on-run-time)
 	6. [Downloading Table Files on Demand](#downloading-table-files-on-demand)
 	7. [Debugging and Adjusting the Log Level](#debugging-and-adjusting-the-log-level)
 	8. [Persisting Log Files in NodeJS using Deprecated Liblouis Log Functions](#persisting-log-files-in-nodejs-using-deprecated-liblouis-log-functions)
 	9. [Usage with Typescript](#usage-with-typescript)
+	10. [Switching between Builds](#switching-between-builds)
 3. [Changelog](#changelog)
 3. [Licensing](#licensing)
 
