@@ -1,8 +1,8 @@
 {
-  "name": "liblouis-js",
+  "name": "liblouis",
   "description": "javascript bindings for liblouis",
   "main": [
-    "liblouis-no-tables.js"
+    "easy-api.js"
   ],
   "moduleType": [
     "amd",

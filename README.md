@@ -335,6 +335,10 @@ Settings like `registerLogCallback` are automatically applied to new build.
 
 # Changelog
 
+__Release 0.2.1:__ `liblouis-js` is now an official part of liblouis. The npm
+and bower packages were renamed to `liblouis`. This release updates package
+URLs from `reiner-dolp/liblouis-js` to `liblouis/liblouis-js`.
+
 __Release 0.2.0:__ Adding support for nodeJS (Issue #10, #11) and commonJS;
 Adding type definitions for Typescript; Updates liblouis to version `2c849bc`;
 Renaming easy api file to `easy-api.js`; Implements `lou_compileString`; Support
