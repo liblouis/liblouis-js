@@ -1,21 +1,23 @@
-These are unoffical "javascript bindings" to liblouis created by cross
+These are offical "javascript bindings" to liblouis created by cross
 compiling [liblouis](https://github.com/liblouis/liblouis) using
-[emscripten](http://emscripten.org/). The official Liblouis API written in C can be directly called
+[emscripten](http://emscripten.org/). The Liblouis API written in C can be directly called
 using the [`ccall`](https://kripken.github.io/emscripten-site/docs/api_reference/preamble.js.html#ccall) and 
 [`cwrap`](https://kripken.github.io/emscripten-site/docs/api_reference/preamble.js.html#cwrap)
 functions provided by emscripten. As directly calling the C API is cumbersome,
 an additional API — called Easy API — is provided for most functions. This package
 supports NodeJS and browser environments.
 
-[![npm version](https://img.shields.io/npm/v/liblouis-js.svg?colorB=44cc11)](https://www.npmjs.com/package/liblouis-js)
-[![Bower version](https://img.shields.io/bower/v/liblouis-js.svg?colorB=44cc11)](https://bower.io/search/?q=liblouis-js)
+[![npm version](https://img.shields.io/npm/v/liblouis.svg?colorB=44cc11&label=Easy-API%20@npm)](https://www.npmjs.com/package/liblouis)
+[![Bower version](https://img.shields.io/bower/v/liblouis.svg?colorB=44cc11&label=Easy-API%20@bower)](https://bower.io/search/?q=liblouis)
+[![latest build in the npm registry](https://img.shields.io/npm/v/liblouis-build.svg?colorB=44cc11&label=Latest%20C-API%20Build%20@npm)](https://www.npmjs.com/package/liblouis-build)
+[![latest build in the bower registry](https://img.shields.io/bower/v/liblouis-build.svg?colorB=44cc11&label=Latest%20C-API%20Build%20@bower)](https://bower.io/search/?q=liblouis-build)
 
 ---
 
 <p align=center><strong>Table of Contents</strong></p>
 
 1. [API Overview](#api-overview)
-	1. [List of Builds Contained in This Repository](#list-of-builds-contained-in-this-repository)
+	1. [Installation](#installation)
 	2. [List of Available Liblouis Functions](#list-of-available-liblouis-functions)
 	3. [Compiling the Latest Version of Liblouis](#compiling-the-latest-version-of-liblouis)
 2. [Usage Examples](#usage-examples)
@@ -36,23 +38,20 @@ supports NodeJS and browser environments.
 
 # API Overview
 
-### List of Builds Contained in this repository
+### Installation
 
-| File             | Filesize | Description                | Version\*                  |
-|------------------|----------|----------------------------|--------------------------|
-| `liblouis-tables-embeded.js`    | 32.2MB   | All tables embeded in file\*\* | commit 2c849bc (> 3.1.0) |
-| `liblouis-no-tables.js`    | 1.43MB   | Tables not included\*\*\* | commit 2c849bc (> 3.1.0) |
+```
+npm install liblouis
+```
 
-Older liblouis builds can be obtained with previous releases of this library.
-See [3].
+This will install the latest available version of liblouis' C-API. If you want
+to fetch a specific version of the C-API, for example version `3.1.0`, you can
+use the following commands:
 
-\* shown is the commit's shortend hash of the liblouis version used to compile
-the file. The comparison operator and version number are relative to the commit
-tagged with the given version, e.g.  `> 3.1.0` is to be read as *newer than the
-commit tagged as version 3.1.0*.
-\*\* tables are available as `tables/{tablename}.{tableextension}`.
-\*\*\* the `tables/` folder in this repository has version _commit 2c849bc (>3.1.0)_
-
+```
+npm install liblouis-build@3.1.0
+npm install liblouis
+```
 
 ### List of Available Liblouis Functions
 
@@ -335,6 +334,10 @@ Settings like `registerLogCallback` are automatically applied to new build.
 
 # Changelog
 
+__Release 0.3.0:__ `liblouis-js` no longer bundles a build of the liblouis
+C-API [3]. Builds were moved to their on npm and bower packages. This makes
+build switching and liblouis C-API selection easier.
+
 __Release 0.2.1:__ `liblouis-js` is now an official part of liblouis. The npm
 and bower packages were renamed to `liblouis`. This release updates package
 URLs from `reiner-dolp/liblouis-js` to `liblouis/liblouis-js`.
@@ -385,5 +388,5 @@ exposes the log level. The Easy API registers a log callback by default, which
 maps each message level to the correct `console` method, e.g. liblouis warning
 messages to `console.warn` and liblouis fatal errors to `console.error`.
 
-[3] The correspondance between liblouis versions and liblouis-js versions are
-as follows: `0.1.0 = 3.0.0 (db2a361)`, `0.2.0 = 3.1.0 (2c849bc)`.
+[3] Before this change, liblouis and liblouis-js versions correspond as follows:
+`0.1.0 = 3.0.0 (db2a361)`, `0.2.0 = 3.1.0 (2c849bc)`.
