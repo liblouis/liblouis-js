@@ -230,7 +230,7 @@ liblouis/emscripten instance.
 In NodeJS environments, `liblouis-js` automatically tries to load the `tables/`
 folder from disk if your built does not already bundle table files.
 
-If you do want to load tables from disk, you can disable this feature
+If you do not want to load tables from disk, you can disable this feature
 by calling:
 
 ```js
@@ -244,6 +244,9 @@ liblouis.enableOnDemandTableLoading(tableFolderPath);
 ```
 
 Providing `null` will reset the path to the original folder location.
+`enableOnDemandTableLoading` file not free tables that were already compiled by
+liblouis automatically. You have to call `liblouis.free` yourself if you
+want liblouis to reload table files.
 
 
 ### Debugging and Adjusting the Log Level
