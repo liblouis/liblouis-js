@@ -8,6 +8,9 @@
 		"type": "git",
 		"url": "git://github.com/liblouis/liblouis-js.git"
 	},
+	"dependencies": {
+		"liblouis-build": "*"
+	},
 	"main": "./liblouis.js",
 	"types": "./liblouis.d.ts",
 	"license": "GPL-3.0"

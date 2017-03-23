@@ -1,4 +1,4 @@
-var capi = require('./liblouis-no-tables');
+var capi = require('liblouis-build');
 var easyapi = require('./easy-api');
 easyapi.setLiblouisBuild(capi);
-exports = easyapi;
+module.exports = easyapi;

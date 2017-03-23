@@ -26,13 +26,14 @@ supports NodeJS and browser environments.
 	3. [Printing the Version Number Using the Easy API in NodeJS](#printing-the-version-number-using-the-easy-api-in-nodejs)
 	4. [Translating and Back-Translating a String Using the Easy API](#translating-and-back-translating-a-string-using-the-easy-api)
 	5. [Altering a Table Definition on Run-Time](#altering-a-table-definition-on-run-time)
-	6. [Downloading Table Files on Demand](#downloading-table-files-on-demand)
-	7. [Debugging and Adjusting the Log Level](#debugging-and-adjusting-the-log-level)
-	8. [Persisting Log Files in NodeJS using Deprecated Liblouis Log Functions](#persisting-log-files-in-nodejs-using-deprecated-liblouis-log-functions)
-	9. [Usage with Typescript](#usage-with-typescript)
-	10. [Switching between Builds](#switching-between-builds)
+	6. [Downloading Table Files on Demand in the Browser](#downloading-table-files-on-demand-in-the-browser)
+	7. [Loading Table Files From Disk in NodeJS](#loading-table-files-from-disk-in-nodejs)
+	8. [Debugging and Adjusting the Log Level](#debugging-and-adjusting-the-log-level)
+	9. [Persisting Log Files in NodeJS using Deprecated Liblouis Log Functions](#persisting-log-files-in-nodejs-using-deprecated-liblouis-log-functions)
+	10. [Usage with Typescript](#usage-with-typescript)
+	11. [Switching between Builds](#switching-between-builds)
 3. [Changelog](#changelog)
-3. [Licensing](#licensing)
+4. [Licensing](#licensing)
 
 ---
 
@@ -44,9 +45,23 @@ supports NodeJS and browser environments.
 npm install liblouis
 ```
 
-This will install the latest available version of liblouis' C-API. If you want
-to fetch a specific version of the C-API, for example version `3.1.0`, you can
-use the following commands:
+This will install the latest available version of liblouis' C-API. If you
+want to install the latest stable release execute:
+
+```
+npm install liblouis-build@latest
+npm install liblouis
+```
+
+If you want to install the latest prerelease version execute:
+
+```
+npm install liblouis-build@next
+npm install liblouis
+```
+
+If you want to fetch a specific version of the C-API, for example version
+`3.1.0`, you can use the following commands:
 
 ```
 npm install liblouis-build@3.1.0
@@ -115,12 +130,16 @@ flag](https://kripken.github.io/emscripten-site/docs/porting/files/packaging_fil
 
 ### Printing the Version Number Using the Easy API in the Browser
 
-Include one of the `liblouis-*.js` files first and `easy-api.js` second.
+Include a liblouis build first and the Easy-API second.
 
 ```js
 <!doctype html>
 
-<script src="liblouis-no-tables.js"></script>
+<!-- use your package manager to obtain these files: `build-no-tables.js`
+     is part of the package `liblouis-build`, `easy-api.js` is the main
+     file of the `liblouis-js` package. -->
+
+<script src="build-no-tables.js"></script>
 <script src="easy-api.js"></script>
 
 <script>
@@ -132,12 +151,12 @@ console.info("Liblouis Version:", liblouis.version());
 
 ### Printing the Version Number By Directly Calling Liblouis in the Browser
 
-Include one of the `liblouis-*.js` files.
+You can include any liblouis build for this example.
 
 ```js
 <!doctype html>
 
-<script src="liblouis-no-tables.js"></script>
+<script src="build-no-tables.js"></script>
 
 <script>
 console.info("Liblouis Version:", Module.ccall("lou_version", "string"));
@@ -181,9 +200,9 @@ console.log(liblouis.translateString("tables/unicode.dis,tables/de-de-g0.utb", "
 // Logs: ⠿⠁
 ```
 
-### Downloading Table Files on Demand
+### Downloading Table Files on Demand in the Browser
 
-After including `liblouis-no-tables.js` and `easy-api.js` call
+After including a build without a bundled table folder and the Easy-API call
 `enableOnDemandTableLoading` with an absolute or relative URL to the table
 directory:
 
@@ -205,6 +224,27 @@ You should call `enableOnDemandTableLoading` only once on initialization.
 Changing the table folder location during execution causes the filesystem to be
 inconsistent. If you have to change the folder location, reload the whole
 liblouis/emscripten instance.
+
+### Loading Table Files from Disk in NodeJS
+
+In NodeJS environments, `liblouis-js` automatically tries to load the `tables/`
+folder from disk if your built does not already bundle table files.
+
+If you do want to load tables from disk, you can disable this feature
+by calling:
+
+```js
+liblouis.disableOnDemandTableLoading();
+```
+
+Or if you want to change the location of the table folder, simply call:
+
+```js
+liblouis.enableOnDemandTableLoading(tableFolderPath);
+```
+
+Providing `null` will reset the path to the original folder location.
+
 
 ### Debugging and Adjusting the Log Level
 
@@ -252,8 +292,8 @@ consider implementing your own log functionality using `registerLogCallback`.
 
 ```js
 const path = require('path');
-const capi = require('./liblouis-no-tables');
-const easyapi = require('./easy-api');
+const capi = require('liblouis-build');
+const easyapi = require('liblouis');
 easyapi.setLiblouisBuild(capi);
 
 // map a directory on the machine to a virtual directory of emscripten:
@@ -301,13 +341,13 @@ The easy api is typed and plays well with
 Add the library as dependency to your `package.json` using
 
 ```
-$ npm install --save liblouis-js
+$ npm install --save liblouis
 ```
 
 and add the following line to each file that uses liblouis
 
 ```js
-/// <reference types="liblouis-js"/>
+/// <reference types="liblouis"/>
 ```
 
 ### Switching between Builds
@@ -316,10 +356,10 @@ Switching between builds is supported in nodeJS and the browser. The example
 below uses nodeJS:
 
 ```js
-const build_1 = require('./liblouis-no-tables');
-const build_2 = require('./liblouis-tables-embeded');
+const build_1 = require('liblouis-build/build-no-tables.js');
+const build_2 = require('liblouis-build/build-tables-embeded.js');
 
-// In nodeJS, liblouis-js uses 'liblouis-no-tables' by default, which is
+// In nodeJS, liblouis-js uses 'build-no-tables' by default, which is
 // included as build_1 above
 const liblouis = require('liblouis');
 
@@ -336,7 +376,8 @@ Settings like `registerLogCallback` are automatically applied to new build.
 
 __Release 0.3.0:__ `liblouis-js` no longer bundles a build of the liblouis
 C-API [3]. Builds were moved to their on npm and bower packages. This makes
-build switching and liblouis C-API selection easier.
+build switching and liblouis C-API selection easier; support for on demand
+table file loading in NodeJS.
 
 __Release 0.2.1:__ `liblouis-js` is now an official part of liblouis. The npm
 and bower packages were renamed to `liblouis`. This release updates package

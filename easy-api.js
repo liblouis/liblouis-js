@@ -53,11 +53,11 @@ liblouis.setLiblouisBuild = function setLiblouisBuild(_capi) {
 		liblouis.registerLogCallback(null);
 	}
 
-	if(isNode) {
-		this.enableOnDemandTableLoading("tables/");
-	}
-
 	FS_ORIGINAL_LOOKUP = capi.FS.lookup;
+
+	if(isNode && !dirExists('tables/')) {
+		liblouis.enableOnDemandTableLoading();
+	}
 };
 
 liblouis.version = function() { return capi.ccall('lou_version', 'string', [], []); };
@@ -158,14 +158,42 @@ liblouis.enableOnDemandTableLoading = function(tableurl) {
 	if(!isNode) {
 		capi.FS.lookup = FS_DYNAMIC_LOOKUP;
 	} else {
+		if(dirExists('/tables')) {
+			liblouis.disableOnDemandTableLoading();
+		}
+
 		capi.FS.mkdir('/tables');
-		var path = require('path');
-		capi.FS.mount(capi.NODEFS, { root: path.resolve(__dirname, "tables/") }, tableurl);
+
+		var tablefolder = tableurl;
+
+		if(!tablefolder) {
+			var path = require('path');
+			var buildpath = require.resolve('liblouis-build');
+			tablefolder = path.resolve(path.dirname(buildpath), "tables/");
+		}
+
+		try {
+			capi.FS.mount(capi.NODEFS, { root: tablefolder }, '/tables');
+		} catch(e) {
+			throw new Error("mounting of table folder failed");
+		}
 	}
 };
 
 liblouis.disableOnDemandTableLoading = function() {
-	capi.FS.lookup = FS_ORIGINAL_LOOKUP;
+	if(!isNode) {
+		capi.FS.lookup = FS_ORIGINAL_LOOKUP;
+	} else if(dirExists('/tables')) {
+		try {
+			capi.FS.unmount('/tables');
+		} catch(e) { }
+
+		try {
+			capi.FS.rmdir('/tables');
+		} catch(e) {
+			throw new Error("removal of mounted table folder failed");
+		}
+	}
 };
 
 var _CONSOLE_MAPPING = {
@@ -185,6 +213,15 @@ liblouis.LOG[liblouis.LOG.WARN  = 30000] = "WARN";
 liblouis.LOG[liblouis.LOG.ERROR = 40000] = "ERROR";
 liblouis.LOG[liblouis.LOG.FATAL = 50000] = "FATAL";
 liblouis.LOG[liblouis.LOG.OFF   = 60000] = "OFF";
+
+function dirExists(path) {
+	try {
+		FS.lookupPath(path);
+		return true;
+	} catch(e) {
+		return false;
+	}
+}
 
 function easyApiDefaultLogCallback(lvl_id, msg) {
 	var lvl_name = liblouis.LOG[lvl_id];
