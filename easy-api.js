@@ -158,9 +158,7 @@ liblouis.enableOnDemandTableLoading = function(tableurl) {
 	if(!isNode) {
 		capi.FS.lookup = FS_DYNAMIC_LOOKUP;
 	} else {
-		if(dirExists('/tables')) {
-			liblouis.disableOnDemandTableLoading();
-		}
+		liblouis.disableOnDemandTableLoading();
 
 		capi.FS.mkdir('/tables');
 
@@ -216,7 +214,7 @@ liblouis.LOG[liblouis.LOG.OFF   = 60000] = "OFF";
 
 function dirExists(path) {
 	try {
-		FS.lookupPath(path);
+		capi.FS.lookupPath(path);
 		return true;
 	} catch(e) {
 		return false;
@@ -227,7 +225,7 @@ function easyApiDefaultLogCallback(lvl_id, msg) {
 	var lvl_name = liblouis.LOG[lvl_id];
 	msg = "["+lvl_name+"] " + msg;
 
-	if(console) {
+	if(typeof console != "undefined") {
 		var fn = console[_CONSOLE_MAPPING[lvl_name]];
 		if(fn) {
 			fn(msg);
