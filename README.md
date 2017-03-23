@@ -28,10 +28,11 @@ supports NodeJS and browser environments.
 	5. [Altering a Table Definition on Run-Time](#altering-a-table-definition-on-run-time)
 	6. [Downloading Table Files on Demand in the Browser](#downloading-table-files-on-demand-in-the-browser)
 	7. [Loading Table Files From Disk in NodeJS](#loading-table-files-from-disk-in-nodejs)
-	8. [Debugging and Adjusting the Log Level](#debugging-and-adjusting-the-log-level)
-	9. [Persisting Log Files in NodeJS using Deprecated Liblouis Log Functions](#persisting-log-files-in-nodejs-using-deprecated-liblouis-log-functions)
-	10. [Usage with Typescript](#usage-with-typescript)
-	11. [Switching between Builds](#switching-between-builds)
+	8. [Dropping the Path Prefix of Bundled Tables](#dropping-the-path-prefix-of-bundled-tables)
+	9. [Debugging and Adjusting the Log Level](#debugging-and-adjusting-the-log-level)
+	10. [Persisting Log Files in NodeJS using Deprecated Liblouis Log Functions](#persisting-log-files-in-nodejs-using-deprecated-liblouis-log-functions)
+	11. [Usage with Typescript](#usage-with-typescript)
+	12. [Switching between Builds](#switching-between-builds)
 3. [Changelog](#changelog)
 4. [Licensing](#licensing)
 
@@ -87,8 +88,8 @@ npm install liblouis
 | `lou_logFile` | ✖\*\* | ✔ |
 | `lou_logPrint` | ✖\*\* | ✔ |
 | `lou_logEnd` | ✖\*\* | ✔ |
-| `lou_setDataPath` | ✖ | ✔ |
-| `lou_getDataPath` | ✖ | ✔ |
+| `lou_setDataPath` | ✔ | ✔ |
+| `lou_getDataPath` | ✔ | ✔ |
 | `lou_getTable` | ✔ | ✔ |
 | `lou_checkTable` | ✔ | ✔ |
 | `lou_readCharFromFile` | ✖ | ✔ |
@@ -99,6 +100,8 @@ npm install liblouis
 
 \*\* `lou_logPrint`, `lou_logFile` and `lou_logEnd` will not be implemented as
 they are deprecated.
+
+\*\*\*
 
 ### Compiling the Latest Version of Liblouis
 
@@ -336,6 +339,25 @@ easyapi.translateString("tables/unicode.dis,tables/de-de-g0.utb", "10 Ziegen");
 The log file is created if it does not exist. If it exists, new log messages
 are appended to the end of the file.
 
+### Dropping the Path Prefix of Bundled Tables
+
+`liblouis.enableOnDemandTableLoading` lets you set the location of the table
+folder if you are not bundling tables in the build's binary. If you want to
+change the folder location inside the bundled virtual filesystem, you can use
+liblouis' `lou_setDataPath` as follows:
+
+```js
+const PREFIX = "/tables";
+
+const capi = require('liblouis-build');
+const easyapi = require('liblouis');
+liblouis.setLiblouisBuild(capi);
+
+capi.FS.mkdir("/liblouis");
+capi.FS.symlink("/tables", "/liblouis/tables");
+liblouis.setDataPath("/");
+```
+
 ### Usage with Typescript
 
 The easy api is typed and plays well with
@@ -378,9 +400,13 @@ Settings like `registerLogCallback` are automatically applied to new build.
 # Changelog
 
 __Release 0.3.0:__ `liblouis-js` no longer bundles a build of the liblouis
-C-API [3]. Builds were moved to their on npm and bower packages. This makes
-build switching and liblouis C-API selection easier; support for on demand
-table file loading in NodeJS.
+C-API [3]. Builds were moved to their own npm and bower packages - this makes
+build switching and liblouis C-API selection easier; Adds support for on demand
+table file loading in NodeJS; implements `lou_setDataPath` and `lou_getDataPath`.
+
+*This release is backward compatible:* Liblouis builds for version `0.2.x` can
+be used with liblouis-js `0.3.0`.
+
 
 __Release 0.2.1:__ `liblouis-js` is now an official part of liblouis. The npm
 and bower packages were renamed to `liblouis`. This release updates package
@@ -389,8 +415,8 @@ URLs from `reiner-dolp/liblouis-js` to `liblouis/liblouis-js`.
 __Release 0.2.0:__ Adding support for nodeJS (Issue #10, #11) and commonJS;
 Adding type definitions for Typescript; Updates liblouis to version `2c849bc`;
 Renaming easy api file to `easy-api.js`; Implements `lou_compileString`; Support
-for build switching; Emscripten methods are no longer leaked to global scope;
-Adds Typescript support.
+for build switching; Emscripten methods are no longer leaked to global scope.
+
 
 *This release is backward compatible:* Liblouis builds for version `0.1.0` can be
 used with liblouis-js `0.2.0`.

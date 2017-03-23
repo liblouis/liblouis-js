@@ -66,6 +66,8 @@ liblouis.getTable = function(str) { return capi.ccall('lou_getTable', 'number', 
 liblouis.checkTable = function(str) { return capi.ccall('lou_checkTable', 'number', ['string'], [str]); };
 liblouis.free = function() { return capi.ccall('lou_free', 'void', [], []); };
 liblouis.charSize = function() { return capi.ccall('lou_charSize', 'number', [], []); };
+liblouis.setDataPath = function(path) { capi.ccall('lou_setDataPath', 'number', ["string"], [path]); };
+liblouis.getDataPath = function() { return capi.ccall('lou_getDataPath', 'string', [], []); };
 liblouis.logFile = function(str) { return capi.ccall('lou_logFile', 'void', ['string'], [str]); };
 liblouis.getFilesystem = function() { return capi.FS; };
 
