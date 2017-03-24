@@ -69,6 +69,11 @@ npm install liblouis-build@3.1.0
 npm install liblouis
 ```
 
+**Warning:** While the programatic interface of `liblouis-build` adheres to the
+semantic versioning specification, table files do not. You should refrain from
+adding `liblouis-build` as dependency with a version range if you are using
+liblouis with custom table files.
+
 ### List of Available Liblouis Functions
 
 | Method           | Easy API | Direct Call API |
