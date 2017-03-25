@@ -5,16 +5,16 @@ function yesno(val) {
 	return val ? "YES": "NO";
 }
 function exit() {
-	console.info("--------------------------------------------------------------------------------");
+	console.error("================================================================================");
 	console.info("SUCCESS: %d      FAILURE: %d      EXCEPTION: %s      DID EARLY EXIT: %s",
 			successful, failed, yesno(uncaughtException), yesno(exitonfailure || uncaughtException));
-	console.info("--------------------------------------------------------------------------------");
+	console.error("================================================================================");
 	process.exit(failed);
 }
 
 function groupEnd() {
 	if(groupName) {
-		console.info("%s", groupName, "(", groupSuccess, "/", groupSuccess + groupFail, ")");
+		console.info("%s (%d/%d)", groupName, groupSuccess, groupSuccess + groupFail);
 	}
 
 	groupFail = groupSuccess = 0;
@@ -25,6 +25,7 @@ function groupStart(name) {
 	if(groupName) {
 		groupEnd();
 	}
+
 	groupName = name;
 }
 
@@ -38,6 +39,7 @@ module.exports = {
 			failed++;
 			groupFail++;
 			console.error("FAILED TEST: ", desc);
+			console.error("--------------------------------------------------------------------------------");
 			if(exitonfailure) {
 				exit();
 			}
@@ -57,9 +59,9 @@ module.exports = {
 process.on('uncaughtException', function(e) {
 	failed++;
 	uncaughtException = true;
-	console.error("--------------------------------------------------------------------------------");
+	console.error("================================================================================");
 	console.error("EXITING EARLY ON EXCEPTION");
-	console.error("--------------------------------------------------------------------------------");
+	console.error("================================================================================");
 	console.error(e);
 	exit();
 });

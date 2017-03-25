@@ -96,7 +96,7 @@ var MEM = {
 
 		read: function(capi, buffptr, bufflenptr) {
 			if(!bufflenptr) { // null-terminated string
-				return UTF16ToString(buffptr);
+				return capi.UTF16ToString(buffptr);
 			} else {
 				var start_index = buffptr >> 1;
 				var end_index = start_index + capi.getValue(bufflenptr, "i32");
@@ -127,7 +127,7 @@ var MEM = {
 
 		read: function(capi, buffptr, bufflenptr) {
 			if(!bufflenptr) { // null-terminated string
-				return UTF32ToString(buffptr);
+				return capi.UTF32ToString(buffptr);
 			} else {
 				var start_index = buffptr >> 2;
 				var end_index = start_index + capi.getValue(bufflenptr, "i32");
@@ -169,6 +169,9 @@ IMPL.lou = {
 	setDataPath: function(path) { this.capi.ccall('lou_setDataPath', 'number', ["string"], [path]); },
 	getDataPath: function() { return this.capi.ccall('lou_getDataPath', 'string', [], []); },
 	getFilesystem: function() { return this.capi.FS; },
+
+	compileString: function() {
+	},
 
 	registerLogCallback: function(fn) {
 
@@ -296,6 +299,7 @@ IMPL.lbu = {
 	getDataPath: IMPL.lou.getDataPath,
 	getFilesystem: IMPL.lou.getFilesystem,
 	registerLogCallback: IMPL.lou.registerLogCallback,
+	compileString: IMPL.lou.compileString,
 };
 
 // Implementation for async usage. By default they are generated to be
@@ -363,6 +367,11 @@ function defaultLiblouisBuild() {
 }
 
 function LiblouisEasyApiAsync(opts) {
+
+	if(IS_NODE) {
+		throw new Error("Async API is only available in browser environments.");
+	}
+
 	this.callId = 1;
 	this.cbs = { "0": function(){} };
 	this.worker = createWorker();
@@ -430,7 +439,7 @@ function dispatch(self, fn, args) {
 }
 
 function LiblouisEasyApi(build) {
-	build = build || defaultLiblouisBuild() || {};
+	build = build || defaultLiblouisBuild();
 
 	if(typeof build === "string") {
 		var builds = LiblouisEasyApi.getAvailableBuilds();
@@ -443,6 +452,10 @@ function LiblouisEasyApi(build) {
 
 	if(typeof build === "function") {
 		build = build();
+	}
+
+	if(!build || !build._lou_version) {
+		throw new Error("argument cannot be resolved to a liblouis build.");
 	}
 
 	this.capi = build;
