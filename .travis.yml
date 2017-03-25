@@ -2,4 +2,5 @@ language: node_js
 node_js:
   - "node"
 before_script:
+  - phantomjs --version 
   - chmod +x ./testrunner/browser.sh
