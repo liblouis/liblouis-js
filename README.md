@@ -134,6 +134,8 @@ emcc liblouis/.libs/liblouis.so -s RESERVED_FUNCTION_POINTERS=1\
  -s EXPORT_NAME="'liblouisBuild'" -s EXTRA_EXPORTED_RUNTIME_METHODS="['FS',\
 'Runtime', 'NODEFS', 'stringToUTF16', 'stringToUTF32', 'Pointer_Stringify']" --pre-js ./inc/pre.js\
  --post-js ./inc/post.js -o build-no-tables.js
+
+cat ./inc/append.js >> build-no-tables.js
 ```
 
 To include a list of table files or a directory containing table files use the [`--embed-file`
