@@ -5,10 +5,10 @@ var assert = testrunner.assert;
 var EasyApi = require("../easy-api").EasyApi;
 
 var BUILDS = {
-	"build-tables-embeded-root-utf16" : {charSize: 2, embededTables: true  },
-	"build-tables-embeded-root-utf32" : {charSize: 4, embededTables: true  },
-	"build-no-tables-utf16"           : {charSize: 2, embededTables: false },
-	"build-no-tables-utf32"           : {charSize: 4, embededTables: false },
+	"build-tables-embeded-root-utf16" : {charSize: 2, embededTables: true  , tableFolder: ""},
+	"build-tables-embeded-root-utf32" : {charSize: 4, embededTables: true  , tableFolder: ""},
+	"build-no-tables-utf16"           : {charSize: 2, embededTables: false , tableFolder: "tables/"},
+	"build-no-tables-utf32"           : {charSize: 4, embededTables: false , tableFolder: "tables/"},
 };
 
 for(var buildname in BUILDS) { if(BUILDS.hasOwnProperty(buildname)) {
@@ -17,6 +17,8 @@ for(var buildname in BUILDS) { if(BUILDS.hasOwnProperty(buildname)) {
 
 	var liblouis = new EasyApi(build);
 	assert(buildname + " can be loaded", true);
+
+	var tbl = "";
 
 	if(!BUILDS[buildname].embededTables) {
 		var can = true;
@@ -27,6 +29,8 @@ for(var buildname in BUILDS) { if(BUILDS.hasOwnProperty(buildname)) {
 			can = false;
 		}
 		assert(buildname + " can enable on demand table loading", can);
+
+		tbl = BUILDS[buildname].tableFolder;
 	}
 
 	var version = liblouis.version();
@@ -37,24 +41,24 @@ for(var buildname in BUILDS) { if(BUILDS.hasOwnProperty(buildname)) {
 		liblouis.charSize() === BUILDS[buildname].charSize);
 
 	assert(buildname + " can translate simple ASCII string",
-		liblouis.translateString("de-de-g0.utb", "Hallo") ===
+		liblouis.translateString(tbl + "de-de-g0.utb", "Hallo") ===
 		"hallo");
 
 	assert(buildname + " can translate simple BMP string",
-		liblouis.translateString("unicode.dis,de-de-g0.utb", "cliché") ===
+		liblouis.translateString(tbl + "unicode.dis," + tbl + "de-de-g0.utb", "cliché") ===
 		"⠉⠇⠊⠉⠓⠈⠑");
 
 	assert(buildname + " can translate simple SMP string",
-		liblouis.translateString("unicode.dis,de-de-g0.utb", "cliché") ===
+		liblouis.translateString(tbl + "unicode.dis," + tbl + "de-de-g0.utb", "cliché") ===
 		"⠉⠇⠊⠉⠓⠈⠑");
 
 	assert(buildname + " test before string compile",
-		liblouis.translateString("unicode.dis,de-de-g0.utb", "1") ===
+		liblouis.translateString(tbl + "unicode.dis," + tbl + "de-de-g0.utb", "1") ===
 		"⠼⠁");
 
-	//liblouis.compileString("tables/unicode.dis,tables/de-de-g0.utb", "numsign 123456");
-	//assert(buildname + "can use compileString",
-		//liblouis.translateString("unicode.dis,de-de-g0.utb", "1") ===
-		//"⠿⠁");
+	liblouis.compileString(tbl + "unicode.dis," + tbl + "de-de-g0.utb", "numsign 123456");
+	assert(buildname + " can use compileString",
+		liblouis.translateString(tbl + "unicode.dis," + tbl + "de-de-g0.utb", "1") ===
+		"⠿⠁");
 }}
 

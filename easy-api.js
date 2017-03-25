@@ -170,7 +170,9 @@ IMPL.lou = {
 	getDataPath: function() { return this.capi.ccall('lou_getDataPath', 'string', [], []); },
 	getFilesystem: function() { return this.capi.FS; },
 
-	compileString: function() {
+	compileString: function(table, opcodes) {
+		var success = this.capi.ccall('lou_compileString', 'number', ['string', 'string'], [table, opcodes]);
+		return !!success;
 	},
 
 	registerLogCallback: function(fn) {
@@ -259,8 +261,9 @@ IMPL.lou = {
 			}
 
 			try {
-				this.capi.FS.mount(this.capi.NODEFS, { root: tablefolder }, '/tables');
+				this.capi.FS.mount(this.capi.FS.filesystems.NODEFS, { root: tablefolder }, '/tables');
 			} catch(e) {
+				console.error(e);
 				throw new Error("mounting of table folder failed");
 			}
 		}
