@@ -11,6 +11,9 @@
 	"dependencies": {
 		"liblouis-build": "*"
 	},
+	"scripts": {
+		"test": "node ./testrunner/main.js"
+	},
 	"main": "./liblouis.js",
 	"types": "./liblouis.d.ts",
 	"license": "GPL-3.0"
