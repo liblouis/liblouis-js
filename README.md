@@ -12,6 +12,9 @@ supports NodeJS and browser environments.
 [![latest build in the npm registry](https://img.shields.io/npm/v/liblouis-build.svg?colorB=44cc11&label=Latest%20C-API%20Build%20@npm)](https://www.npmjs.com/package/liblouis-build)
 [![latest build in the bower registry](https://img.shields.io/bower/v/liblouis-build.svg?colorB=44cc11&label=Latest%20C-API%20Build%20@bower)](https://bower.io/search/?q=liblouis-build)
 
+[![build status of latest Easy-Api](https://img.shields.io/travis/liblouis/liblouis-js/master.svg?label=Build%20of%20Easy-API)](https://travis-ci.org/liblouis/liblouis-js)
+[![build status of latest C-Api](https://img.shields.io/travis/liblouis/js-build.svg?branch=master&label=Build%20of%20C-API)](https://travis-ci.org/liblouis/liblouis-js)
+
 ---
 
 <p align=center><strong>Table of Contents</strong></p>
