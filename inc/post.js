@@ -1,9 +1,13 @@
-Module.FS = FS;
-Module.Runtime = Runtime;
-Module.NODEFS = NODEFS;
-Module.stringToUTF16 = stringToUTF16;
-Module.Pointer_stringify = Pointer_stringify;
+if(this) {
+	this.liblouisBuilds = this.liblouisBuilds || {};
 
-ns.liblouis_emscripten = Module;
+	var version;
+	try {
+		version = this.ccall('lou_version', 'string', [], []);
+	} catch(e) {
+		version = "unknown";
+	}
 
-})(this);
+	this.liblouisBuilds[version] = this.liblouisBuilds[version] || [];
+	this.liblouisBuilds[version].push(Module);
+}

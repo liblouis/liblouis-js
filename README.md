@@ -120,19 +120,25 @@ cd liblouis
 emconfigure ./configure
 emmake make
 
-emcc liblouis/.libs/liblouis.so -s RESERVED_FUNCTION_POINTERS=1 \
--s EXPORTED_FUNCTIONS="['_lou_version', '_lou_translateString', '_lou_translate',\
+emcc liblouis/.libs/liblouis.so -s RESERVED_FUNCTION_POINTERS=1\
+ -s EXPORTED_FUNCTIONS="['_lou_version', '_lou_translateString', '_lou_translate',\
 '_lou_backTranslateString', '_lou_backTranslate', '_lou_hyphenate',\
 '_lou_compileString', '_lou_getTypeformForEmphClass', '_lou_dotsToChar',\
 '_lou_charToDots', '_lou_registerLogCallback', '_lou_setLogLevel',\
 '_lou_logFile', '_lou_logPrint', '_lou_logEnd', '_lou_setDataPath',\
 '_lou_getDataPath', '_lou_getTable', '_lou_checkTable',\
-'_lou_readCharFromFile', '_lou_free', '_lou_charSize']" \
---post-js ./inc/post.js --pre-js ./inc/pre.js -o liblouis.js
+'_lou_readCharFromFile', '_lou_free', '_lou_charSize']" -s MODULARIZE=1\
+ -s EXPORT_NAME="'liblouisBuild'" -s EXTRA_EXPORTED_RUNTIME_METHODS="['FS',\
+'Runtime', 'NODEFS', 'stringToUTF16', 'stringToUTF32', 'Pointer_Stringify']" --pre-js ./inc/pre.js\
+ --post-js ./inc/post.js -o build-no-tables.js
 ```
 
 To include a list of table files or a directory containing table files use the [`--embed-file`
 flag](https://kripken.github.io/emscripten-site/docs/porting/files/packaging_files.html#packaging-using-emcc).
+For example, to embed all tables in a subfolder called `tables` add `--embed-file tables`, to embed
+all tables in the virtual filesystem root `--embed-file tables@/`. If you want to optimize your
+build, you can remove either `'stringToUTF32'` or `stringToUTF16` depending on whether you build
+liblouis for 32-bit Unicode or not.
 
 # Usage Examples
 
@@ -167,7 +173,7 @@ You can include any liblouis build for this example.
 <script src="build-no-tables.js"></script>
 
 <script>
-console.info("Liblouis Version:", Module.ccall("lou_version", "string"));
+console.info("Liblouis Version:", liblouisBuild.ccall("lou_version", "string"));
 // Should print:
 // Liblouis Version: 3.1.0
 </script>
@@ -403,6 +409,14 @@ liblouis.setLiblouisBuild(build_1);
 Settings like `registerLogCallback` are automatically applied to new build.
 
 # Changelog
+
+__Release 0.4.0:__ Removal of build switching `liblouis.setLiblouisBuild`
+build in favor of multiple concurrent instances of the Easy-API. Introduction
+of async Easy-API that automatically creates a worker thread; this allows
+you to use on demand table loading effortlessly.
+
+*This release is backward compatible:* Liblouis builds for previous versions
+can be used with liblouis-js `0.4.0`.
 
 __Release 0.3.0:__ `liblouis-js` no longer bundles a build of the liblouis
 C-API [3]. Builds were moved to their own npm and bower packages - this makes
