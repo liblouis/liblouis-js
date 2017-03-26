@@ -8,7 +8,7 @@ phantom.onError = printError;
 
 log("NEW PHANTOMJS INSTANCE BOOTED");
 
-var MAXTIME_MS = 10000;
+var MAXTIME_MS = 30000;
 
 setTimeout(function() {
 	log("KILLING INSTANCE AS TIME BUDGET OF " + (~~(MAXTIME_MS/1000)) + " SECONDS WAS EXHAUSTED");
