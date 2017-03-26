@@ -1,3 +1,5 @@
+console.log("[INFO] EXECUTING TESTS IN NODEJS");
+
 var testrunner = require("./testrunner");
 var assert = testrunner.assert;
 

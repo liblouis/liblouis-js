@@ -5,16 +5,17 @@ function yesno(val) {
 	return val ? "YES": "NO";
 }
 function exit() {
-	console.error("================================================================================");
-	console.info("SUCCESS: %d      FAILURE: %d      EXCEPTION: %s      DID EARLY EXIT: %s",
-			successful, failed, yesno(uncaughtException), yesno(exitonfailure || uncaughtException));
-	console.error("================================================================================");
-	process.exit(failed);
+	console.info("================================================================================");
+	console.info("SUCCESS: "+successful+"      FAILURE: "+failed+"      EXCEPTION: "+yesno(uncaughtException)+"      DID EARLY EXIT: " + yesno(exitonfailure || uncaughtException));
+	console.info("================================================================================");
+	if(typeof process !== "undefined") {
+		process.exit(failed);
+	}
 }
 
 function groupEnd() {
 	if(groupName) {
-		console.info("%s (%d/%d)", groupName, groupSuccess, groupSuccess + groupFail);
+		console.info(groupName + " (" + groupSuccess + "/" + (groupSuccess + groupFail) + ")");
 	}
 
 	groupFail = groupSuccess = 0;
@@ -29,23 +30,27 @@ function groupStart(name) {
 	groupName = name;
 }
 
+function assert(desc, result) {
+	if(result) {
+		successful++;
+		groupSuccess++;
+	} else {
+		failed++;
+		groupFail++;
+		console.info("FAILED TEST: ", desc);
+		console.info("--------------------------------------------------------------------------------");
+		if(exitonfailure) {
+			exit();
+			return;
+		}
+	}
+}
+
+if(typeof module !== "undefined" && typeof process !== "undefined") {
+
 module.exports = {
 	
-	assert: function assert(desc, result) {
-		if(result) {
-			successful++;
-			groupSuccess++;
-		} else {
-			failed++;
-			groupFail++;
-			console.error("FAILED TEST: ", desc);
-			console.error("--------------------------------------------------------------------------------");
-			if(exitonfailure) {
-				exit();
-			}
-		}
-	},
-
+	assert: assert,
 
 	exitOnFailure: function() {
 		exitonfailure = true;
@@ -59,9 +64,12 @@ module.exports = {
 process.on('uncaughtException', function(e) {
 	failed++;
 	uncaughtException = true;
-	console.error("================================================================================");
-	console.error("EXITING EARLY ON EXCEPTION");
-	console.error("================================================================================");
-	console.error(e);
+	console.info("================================================================================");
+	console.info("EXITING EARLY ON EXCEPTION");
+	console.info("================================================================================");
+	console.info(e);
 	exit();
 });
+
+}
+console.log("[INFO] loaded testrunner");
