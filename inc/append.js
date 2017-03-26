@@ -1,1 +1,1 @@
-liblouisBuild();
+liblouisBuild = liblouisBuild();
