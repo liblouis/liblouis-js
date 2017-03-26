@@ -25,6 +25,8 @@ if(args.length > 1) {
 	for(var i = 0; i < buildSubset.length; ++i) {
 		if(!ALL_BUILDS[buildSubset[i]]) {
 			log("SKIPPING UNKNOWN BUILD " + buildSubset[i]);
+			numFailedBuilds++;
+			numFailedBuildLoads++;
 		} else {
 			BUILDS[buildSubset[i]] = ALL_BUILDS[buildSubset[i]];
 		}
