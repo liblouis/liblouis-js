@@ -1,3 +1,4 @@
+#!/bin/bash
 echo "[INFO] EXECUTING TESTS IN BROWSER ENVIRONMENT (PHANTOMJS)"
 cd "$(dirname "$0")/../"
 python -m SimpleHTTPServer 8080 &
