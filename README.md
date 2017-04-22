@@ -1,4 +1,4 @@
-These are offical "javascript bindings" to liblouis created by cross
+These are "javascript bindings" to liblouis created by cross
 compiling [liblouis](https://github.com/liblouis/liblouis) using
 [emscripten](http://emscripten.org/). The Liblouis API written in C can be directly called
 using the [`ccall`](https://kripken.github.io/emscripten-site/docs/api_reference/preamble.js.html#ccall) and 
@@ -45,22 +45,17 @@ supports NodeJS and browser environments.
 
 ### Installation
 
+#### With NPM
+
 ```
 npm install liblouis
 ```
 
-This will install the latest available version of liblouis' C-API. If you
-want to install the latest stable release execute:
+This will install the latest available stable release version of liblouis' C-API and is 
+equivalent to an installation with:
 
 ```
 npm install liblouis-build@latest
-npm install liblouis
-```
-
-If you want to install the latest prerelease version execute:
-
-```
-npm install liblouis-build@next
 npm install liblouis
 ```
 
@@ -71,6 +66,24 @@ If you want to fetch a specific version of the C-API, for example version
 npm install liblouis-build@3.1.0
 npm install liblouis
 ```
+
+If you want to install the latest available development version of liblouis' C-API execute:
+
+```
+npm install liblouis/js-build
+npm install liblouis
+```
+
+If you want to install a specific development version of liblouis' C-API, you can
+specify the commit hash:
+
+```
+npm install liblouis/js-build#commit-4b4c025
+npm install liblouis
+```
+
+You have to specify *exactly* 7 digits of the commit hash. Some commits won't
+have a prebuilt binary available. In this case [you can build liblouis yourself](#compiling-the-latest-version-of-liblouis).
 
 **Warning:** While the programatic interface of `liblouis-build` adheres to the
 semantic versioning specification, table files do not. You should refrain from
@@ -120,30 +133,41 @@ cd liblouis
 
 # build
 ./autogen.sh
-emconfigure ./configure
+emconfigure ./configure --disable-shared
 emmake make
 
-emcc liblouis/.libs/liblouis.so -s RESERVED_FUNCTION_POINTERS=1\
- -s EXPORTED_FUNCTIONS="['_lou_version', '_lou_translateString', '_lou_translate',\
-'_lou_backTranslateString', '_lou_backTranslate', '_lou_hyphenate',\
-'_lou_compileString', '_lou_getTypeformForEmphClass', '_lou_dotsToChar',\
-'_lou_charToDots', '_lou_registerLogCallback', '_lou_setLogLevel',\
-'_lou_logFile', '_lou_logPrint', '_lou_logEnd', '_lou_setDataPath',\
-'_lou_getDataPath', '_lou_getTable', '_lou_checkTable',\
-'_lou_readCharFromFile', '_lou_free', '_lou_charSize']" -s MODULARIZE=1\
- -s EXPORT_NAME="'liblouisBuild'" -s EXTRA_EXPORTED_RUNTIME_METHODS="['FS',\
-'Runtime', 'NODEFS', 'stringToUTF16', 'stringToUTF32', 'Pointer_Stringify']" --pre-js ./inc/pre.js\
- --post-js ./inc/post.js -o build-no-tables.js
+emcc ./liblouis/.libs/liblouis.a -s RESERVED_FUNCTION_POINTERS=1 -s MODULARIZE=1\
+	 -s EXPORT_NAME="'liblouisBuild'" -s EXTRA_EXPORTED_RUNTIME_METHODS="['FS',\
+	'Runtime', 'stringToUTF16', 'Pointer_Stringify']" --pre-js ./liblouis-js/inc/pre.js\
+	 --post-js ./liblouis-js/inc/post.js -o build-no-tables.js
 
 cat ./inc/append.js >> build-no-tables.js
+```
+
+In liblouis versions prior to release 3.2.0, you have to list all exported API
+functions:
+
+```
+emcc ./liblouis/.libs/liblouis.a -s RESERVED_FUNCTION_POINTERS=1 -s MODULARIZE=1\
+	 -s EXPORTED_FUNCTIONS="['_lou_version', '_lou_translateString', '_lou_translate',\
+	'_lou_backTranslateString', '_lou_backTranslate', '_lou_hyphenate',\
+	'_lou_compileString', '_lou_getTypeformForEmphClass', '_lou_dotsToChar',\
+	'_lou_charToDots', '_lou_registerLogCallback', '_lou_setLogLevel',\
+	'_lou_logFile', '_lou_logPrint', '_lou_logEnd', '_lou_setDataPath',\
+	'_lou_getDataPath', '_lou_getTable', '_lou_checkTable',\
+	'_lou_readCharFromFile', '_lou_free', '_lou_charSize']"\
+	 -s EXPORT_NAME="'liblouisBuild'" -s EXTRA_EXPORTED_RUNTIME_METHODS="['FS',\
+	'Runtime', 'stringToUTF16', 'Pointer_Stringify']" --pre-js ./liblouis-js/inc/pre.js\
+	 --post-js ./liblouis-js/inc/post.js -o build-no-tables.js
 ```
 
 To include a list of table files or a directory containing table files use the [`--embed-file`
 flag](https://kripken.github.io/emscripten-site/docs/porting/files/packaging_files.html#packaging-using-emcc).
 For example, to embed all tables in a subfolder called `tables` add `--embed-file tables`, to embed
-all tables in the virtual filesystem root `--embed-file tables@/`. If you want to optimize your
-build, you can remove either `'stringToUTF32'` or `stringToUTF16` depending on whether you build
-liblouis for 32-bit Unicode or not.
+all tables in the virtual filesystem root add `--embed-file tables@/`.
+
+If you build liblouis for 32-bit Unicode, execute configure with
+`--enable-ucs4` and subsitute `stringToUTF16` with `stringToUTF32`.
 
 # Usage Examples
 
