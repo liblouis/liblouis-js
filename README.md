@@ -122,11 +122,9 @@ liblouis with custom table files.
 \*\* `lou_logPrint`, `lou_logFile` and `lou_logEnd` will not be implemented as
 they are deprecated.
 
-\*\*\*
-
 ### Compiling the Latest Version of Liblouis
 
-```
+```shell
 # obtain the latest version
 git clone https://github.com/liblouis/liblouis.git
 cd liblouis
@@ -147,7 +145,7 @@ cat ./inc/append.js >> build-no-tables.js
 In liblouis versions prior to release 3.2.0, you have to list all exported API
 functions:
 
-```
+```shell
 emcc ./liblouis/.libs/liblouis.a -s RESERVED_FUNCTION_POINTERS=1 -s MODULARIZE=1\
 	 -s EXPORTED_FUNCTIONS="['_lou_version', '_lou_translateString', '_lou_translate',\
 	'_lou_backTranslateString', '_lou_backTranslate', '_lou_hyphenate',\
