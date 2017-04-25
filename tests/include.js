@@ -11,7 +11,11 @@ assert("can get version of default instance", typeof version === "string" &&
 	version.length > 0);
 
 var EasyApi = require("../easy-api").EasyApi;
-var embededBuild = require("liblouis-build/build-tables-embeded-root-utf16");
+
+var builds = require("../testrunner/builds");
+var buildlist = builds.getBuilds();
+
+var embededBuild = require("liblouis-build/" + buildlist[buildlist.length-1]);
 
 var embededLiblouis = new EasyApi(embededBuild);
 
