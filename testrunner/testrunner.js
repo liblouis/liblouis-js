@@ -58,7 +58,7 @@ module.exports = {
 
 	groupStart: groupStart,
 	groupEnd: groupEnd,
-	exit: exit
+	exit: exit,
 };
 
 process.on('uncaughtException', function(e) {

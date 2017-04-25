@@ -15,45 +15,27 @@ setTimeout(function() {
 	phantom.exit(1);
 }, MAXTIME_MS);
 
-var URL = "http://localhost:8080/";
+var URL = "http://localhost:"+require("./hostport")+"/";
 
 var fails = 0,                  // number of failed unit tests overall
     numRun = 0,                 // number of builds tested
     numFailedBuilds = 0,        // number of builds that failed tests or failed to load
     numFailedBuildLoads = 0;    // number of builds that failed to load
 
-var BUILDS = {};
-var ALL_BUILDS = require("./builds");
 
 var system = require('system');
 var args = system.args;
 
-if(args.length > 1) {
-	var buildSubset = args[1].split(",");
-	for(var i = 0; i < buildSubset.length; ++i) {
-		if(!ALL_BUILDS[buildSubset[i]]) {
-			log("SKIPPING UNKNOWN BUILD " + buildSubset[i]);
-			numFailedBuilds++;
-			numFailedBuildLoads++;
-		} else {
-			BUILDS[buildSubset[i]] = ALL_BUILDS[buildSubset[i]];
-		}
-	}
-} else {
-	BUILDS = ALL_BUILDS;
-}
-
-var BUILDS_ARR = toArray(BUILDS);
-var BUILDS_PATH = require("./phantomBuildPath");
-
-var allRun = BUILDS_ARR.length; // number of builds that must be tested
-var buildReportedPhantomErrors = []; // counts startup errors for each instance
-
-if(!allRun) {
-	log("NO VALID BUILDS SPECIFIED.");
-	log("EXITING PHANTOMJS INSTANCE EARLY WITH SUCCESS STATUS CODE...");
+if(args.length <= 1) {
+	log("NO BUILDS SPECIFIED.");
 	phantom.exit(1);
 }
+
+var BUILDS = args[1].split(",");
+var BUILDS_PATH = require("./phantomBuildPath");
+
+var allRun = BUILDS.length; // number of builds that must be tested
+var buildReportedPhantomErrors = []; // counts startup errors for each instance
 
 var webpage = require('webpage');
 
@@ -73,7 +55,7 @@ BufferedConsole.prototype.dump = function(msg) {
 
 function testBuildLoop() {
 	buildReportedPhantomErrors[numRun] = 0;
-	testBuild(BUILDS_ARR[numRun].name, testBuildLoop);
+	testBuild(BUILDS[numRun], testBuildLoop);
 }
 testBuildLoop();
 
@@ -91,8 +73,10 @@ function testBuild(buildname, cb) {
 	page.onResourceError = printResourceError;
 	page.onResourceTimeout = printResourceTimeoutError;
 
-	page.open(URL + 'testrunner/index/' + buildname + '.html', function(status) {
+	page.open(URL + 'testrunner/index/index.html?'+buildname, function(status) {
 		// not finding the resource is a success...
+		console.log("status:", status);
+		console.log("errors:", buildReportedPhantomErrors[numRun]);
 		if (status !== "success" || buildReportedPhantomErrors[numRun]) {
 			log(buildname + " FAILED to load tests", buildReportedPhantomErrors[numRun]);
 			numFailedBuilds++;
@@ -179,7 +163,7 @@ function printError(msg, trace) {
 			msgStack.push(' -> ' + (t.file || t.sourceURL) + ': ' + t.line + (t.function ? ' (in function ' + t.function +')' : ''));
 		});
 	}
-	console.error(msgStack.join('\n'));
+	log(msgStack.join('\n'));
 }
 
 function printResourceError(err) {

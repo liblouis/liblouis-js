@@ -24,6 +24,7 @@ supports NodeJS and browser environments.
 	2. [List of Available Liblouis Functions](#list-of-available-liblouis-functions)
 	3. [Compiling the Latest Version of Liblouis](#compiling-the-latest-version-of-liblouis)
 2. [Usage Examples](#usage-examples)
+	4. [Testing a Liblouis Build](#testing-a-liblouis-build)
 	1. [Printing the Version Number Using the Easy API in the Browser](#printing-the-version-number-using-the-easy-api-in-the-browser)
 	2. [Printing the Version Number By Directly Calling Liblouis in the Browser](#printing-the-version-number-by-directly-calling-liblouis-in-the-browser)
 	3. [Printing the Version Number Using the Easy API in NodeJS](#printing-the-version-number-using-the-easy-api-in-nodejs)
@@ -166,6 +167,45 @@ all tables in the virtual filesystem root add `--embed-file tables@/`.
 
 If you build liblouis for 32-bit Unicode, execute configure with
 `--enable-ucs4` and subsitute `stringToUTF16` with `stringToUTF32`.
+
+### Testing a Liblouis Build
+
+You have to make your build available as the node module `liblouis-build`. If you just
+built a binary on your system, you can execute the following command in the `liblouis-js`
+package folder. The path `../js-build` should point to the builds folder:
+
+```
+npm link ../js-build --production
+```
+
+To test all builds in NodeJS and the browser, run:
+
+```shell
+npm test
+```
+
+To only run tests in NodeJS, run:
+
+```shell
+npm run test-node
+```
+
+To only run tests in the browser, run:
+
+```shell
+npm run test-browser
+```
+
+Note that browser tests require PhantomJS to be installed. You can pass a list of
+build names to only test a subset of the available builds. The command will fail
+if a build cannot be found. A few examples:
+
+```shell
+npm test -- build-no-tables-utf16.js build-no-tables-utf32.js
+npm run test-node -- build-no-tables-utf16.js build-no-tables-utf32.js
+npm run test-browser -- build-no-tables-utf16.js build-no-tables-utf32.js
+```
+
 
 # Usage Examples
 

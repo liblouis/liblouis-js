@@ -12,7 +12,9 @@
 		"liblouis-build": "*"
 	},
 	"scripts": {
-		"test": "./testrunner/all.sh"
+		"test": "node ./testrunner/all.js",
+		"test-browser": "node ./testrunner/browser.js",
+		"test-node": "node ./testrunner/node.js"
 	},
 	"main": "./liblouis.js",
 	"types": "./liblouis.d.ts",

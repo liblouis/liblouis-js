@@ -3,19 +3,22 @@ testrunner.groupStart("rudimentary per build tests");
 
 var assert = testrunner.assert;
 var EasyApi = require("../easy-api").EasyApi;
-var BUILDS = require("../testrunner/builds");
+var builds = require("../testrunner/builds");
+var buildlist = builds.getBuilds();
 
-for(var buildname in BUILDS) { if(BUILDS.hasOwnProperty(buildname)) {
+for(var i = 0; i < buildlist.length; ++i) {
+	var buildname = buildlist[i];
 
 	var build = require("liblouis-build/"+buildname);
 
 	var liblouis = new EasyApi(build);
 	assert(buildname + " can be loaded", true);
 
-	var tbl = "";
+	var tbl = builds.tableFolder(buildname);
 
-	if(!BUILDS[buildname].embededTables) {
+	if(!builds.embededTables(buildname)) {
 		var can = true;
+
 		try {
 			liblouis.enableOnDemandTableLoading();
 		} catch(e) {
@@ -24,7 +27,6 @@ for(var buildname in BUILDS) { if(BUILDS.hasOwnProperty(buildname)) {
 		}
 		assert(buildname + " can enable on demand table loading", can);
 
-		tbl = BUILDS[buildname].tableFolder;
 	}
 
 	var version = liblouis.version();
@@ -32,7 +34,7 @@ for(var buildname in BUILDS) { if(BUILDS.hasOwnProperty(buildname)) {
 		typeof version === "string" && version.length > 0);
 
 	assert(buildname + "knows if its UTF-16 or UTF-32",
-		liblouis.charSize() === BUILDS[buildname].charSize);
+		liblouis.charSize() === builds.charSize(buildname));
 
 	assert(buildname + " can translate simple ASCII string",
 		liblouis.translateString(tbl + "de-de-g0.utb", "Hallo") ===
@@ -54,5 +56,5 @@ for(var buildname in BUILDS) { if(BUILDS.hasOwnProperty(buildname)) {
 	assert(buildname + " can use compileString",
 		liblouis.translateString(tbl + "unicode.dis," + tbl + "de-de-g0.utb", "1") ===
 		"⠿⠁");
-}}
+}
 

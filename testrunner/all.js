@@ -1,0 +1,2 @@
+require("./browser");
+require("./node");
