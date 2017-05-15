@@ -22,7 +22,7 @@ var IS_WEB_WORKER = typeof WorkerGlobalScope !== 'undefined' && self instanceof 
 var IS_NODE = !IS_BROWSER_GUI_THREAD && !IS_WEB_WORKER;
 
 function createWorker() {
-	var blob = new Blob([
+	var blob = new Blob([[
 		"var CMD = {",
 			"init: function(path) {",
 				// TODO: this is kind of dangerous...
@@ -33,8 +33,8 @@ function createWorker() {
 				'});',
 			"},",
 			"lou: function(data) {",
-				"if(liblouis.hasOwnProperty(data.fn) && typeof liblouis[data.fn] == 'function') {",	
-					"return liblouis[data.fn].call(liblouis, data.args);",
+				"if(LiblouisEasyApi.prototype.hasOwnProperty(data.fn) && typeof liblouis[data.fn] == 'function') {",	
+					"return liblouis[data.fn].apply(liblouis, data.args);",
 				"}",
 				"return null",
 			"}",
@@ -52,7 +52,7 @@ function createWorker() {
 				"data: res",
 			"});",
 		"};"
-	], { type: "text/javascript" });
+	].join("\n")], { type: "text/javascript" });
 	return new Worker(window.URL.createObjectURL(blob));
 }
 
@@ -73,7 +73,7 @@ function bindDynLoader(self) {
 			res = self.capi.FS.lookup.apply(this, [parent, name]);
 		}
 
-		self.capi.FS.lookup = dynloader;
+		self.capi.FS.lookup = dynLoader;
 		return res;
 	};
 }
@@ -185,8 +185,9 @@ IMPL.lou = {
 			fn = easyApiDefaultLogCallback;
 		}
 
+		var self = this;
 		this.capi._log_callback_fn_pointer = this.capi.Runtime.addFunction(function(logLvl, msg) {
-			fn(logLvl, this.capi.Pointer_stringify(msg));
+			fn(logLvl, self.capi.Pointer_stringify(msg));
 		});
 
 		this.capi.ccall('lou_registerLogCallback', 'void', ['pointer'],
@@ -209,7 +210,6 @@ IMPL.lou = {
 		var bufflen = this.mem.getBufferLength(inbuf);
 		var outbuff_ptr = this.capi._malloc(bufflen);
 
-		// in emscripten we need a 32bit cell for each pointer
 		var bufflen_ptr = this.capi._malloc(4);
 		var strlen_ptr = this.capi._malloc(4);
 
@@ -240,7 +240,7 @@ IMPL.lou = {
 
 	enableOnDemandTableLoading: function(tableurl) {
 		if(IS_BROWSER_GUI_THREAD) {
-			throw new Error("This feature is only available in web" +
+			throw new Error("This feature is only available in web " +
 				"workers and nodeJS");
 		}
 
@@ -312,15 +312,16 @@ IMPL.worker = {
 	registerLogCallback: function(cb) {
 		if(cb === null) {
 			this.logCallback = easyApiDefaultLogCallback;
+		} else {
+			this.logCallback = cb;
 		}
-		this.logCallback = cb;
 	},
 
 	getFilesystem: function() { throw new Error("cannot get filesystem of async liblouis instance"); },
 
 	enableOnDemandTableLoading: function(url, fn) {
 		if(IS_BROWSER_GUI_THREAD) {
-			url = window.location.origin + url;
+			url = window.location.origin + "/" + url;
 		}
 
 		fn = fn || NOOP;
@@ -374,6 +375,8 @@ function LiblouisEasyApiAsync(opts) {
 	if(IS_NODE) {
 		throw new Error("Async API is only available in browser environments.");
 	}
+
+	this.registerLogCallback(null);
 
 	this.callId = 1;
 	this.cbs = { "0": function(){} };
@@ -464,6 +467,8 @@ function LiblouisEasyApi(build) {
 	this.capi = build;
 	this.impl = hasLbu(build) ? IMPL.lbu : IMPL.lou;
 	this.mem = this.charSize() === 4 ? MEM["4"] : MEM["2"];
+
+	this.registerLogCallback(null);
 }
 
 for(i = 0; i < API_METHODS.length; ++i) {
