@@ -15,6 +15,10 @@ supports NodeJS and browser environments.
 [![build status of latest Easy-Api](https://img.shields.io/travis/liblouis/liblouis-js/master.svg?label=Build%20of%20Easy-API)](https://travis-ci.org/liblouis/liblouis-js)
 [![build status of latest C-Api](https://img.shields.io/travis/liblouis/js-build.svg?branch=master&label=Build%20of%20C-API)](https://travis-ci.org/liblouis/liblouis-js)
 
+<!--[![build status of latest Easy-Api in Browser GUI Thread](https://img.shields.io/travis/liblouis/liblouis-js/master.svg?label=Build%20of%20Easy-API%20GUI-Thread)](https://travis-ci.org/liblouis/liblouis-js)-->
+<!--[![build status of latest Easy-Api in Worker Thread](https://img.shields.io/travis/liblouis/liblouis-js/master.svg?label=Build%20of%20Easy-API%20Worker-Thread)](https://travis-ci.org/liblouis/liblouis-js)-->
+<!--[![build status of latest Easy-Api in NodeJS](https://img.shields.io/travis/liblouis/liblouis-js/master.svg?label=Build%20of%20Easy-API%20NodeJS)](https://travis-ci.org/liblouis/liblouis-js)-->
+
 ---
 
 <p align=center><strong>Table of Contents</strong></p>
@@ -52,7 +56,7 @@ supports NodeJS and browser environments.
 npm install liblouis
 ```
 
-This will install the latest available stable release version of liblouis' C-API and is 
+This will *install the latest available stable release version* of liblouis' C-API and is 
 equivalent to an installation with:
 
 ```
@@ -60,38 +64,56 @@ npm install liblouis-build@latest
 npm install liblouis
 ```
 
-If you want to fetch a specific version of the C-API, for example version
-`3.1.0`, you can use the following commands:
+*If you want to fetch a specific version of the C-API*, for example version
+`3.2.0`, you can use the following commands:
 
 ```
-npm install liblouis-build@3.1.0
+npm install liblouis-build@3.2.0
 npm install liblouis
 ```
 
-If you want to install the latest available development version of liblouis' C-API execute:
+Builds of release versions are available within minutes of the C-API release.
+They are however initially published as release candidates using a `-rc*`
+suffix. You can use `npm view liblouis-build versions` to list all release
+versions and all release candidates available.
+
+*If you want to install the latest available development version* of liblouis'
+C-API execute:
 
 ```
 npm install liblouis/js-build
 npm install liblouis
 ```
 
-If you want to install a specific development version of liblouis' C-API, you can
+*If you want to install a specific development version* of liblouis' C-API, you can
 specify the commit hash:
 
 ```
-npm install liblouis/js-build#commit-4b4c025
+npm install liblouis/js-build#commit-4b4c02
 npm install liblouis
 ```
 
-You have to specify *exactly* 7 digits of the commit hash. Some commits won't
+You have to specify *exactly* 6 digits of the commit hash. Some commits won't
 have a prebuilt binary available. In this case [you can build liblouis yourself](#compiling-the-latest-version-of-liblouis).
 
-**Warning:** While the programatic interface of `liblouis-build` adheres to the
+⚠ **Warning:** While the programatic interface of `liblouis-build` adheres to the
 semantic versioning specification, table files do not. You should refrain from
 adding `liblouis-build` as dependency with a version range if you are using
 liblouis with custom table files.
 
 ### List of Available Liblouis Functions
+
+All liblouis C-API functions listed in the [official liblouis
+documentation](liblouis.org/documentation/liblouis.html) can be directly called
+using the
+[`ccall`](https://kripken.github.io/emscripten-site/docs/api_reference/preamble.js.html#ccall)
+and
+[`cwrap`](https://kripken.github.io/emscripten-site/docs/api_reference/preamble.js.html#cwrap)
+functions. However, you have to explicitly copy all arguments to the heap and
+specify the type of the argument as described in the emscripten documentation.
+
+Most functions in the C-API have an identically named method in the Easy-API that correctly
+invokes the C-API for you. The table below lists all functions that were implemented:
 
 | Method           | Easy API | Direct Call API |
 |------------------|--------------|-------------|
@@ -122,6 +144,30 @@ liblouis with custom table files.
 
 \*\* `lou_logPrint`, `lou_logFile` and `lou_logEnd` will not be implemented as
 they are deprecated.
+
+### List of Additional Easy-API Methods
+
+The following methods do not have a corresponding C-API function, but are part of the Easy-API.
+
+####enableOnDemandFileLoading(url)
+
+####LiblouisEasyApi#constructor(build)
+
+```js
+new LiblouisEasyApi(build :EmscriptenModule|string);
+```
+
+Takes either a liblouis C-API build or a liblouis release version number as
+argument.
+
+####LiblouisAsyncEasyApi#constructor(options)
+
+```js
+new LiblouisAsyncEasyApi({
+	capi: string,
+	easyapi: string
+});
+```
 
 ### Compiling the Latest Version of Liblouis
 
@@ -209,6 +255,8 @@ npm run test-browser -- build-no-tables-utf16.js build-no-tables-utf32.js
 
 # Usage Examples
 
+A lot more examples can be found in the folder `tests/`.
+
 ### Printing the Version Number Using the Easy API in the Browser
 
 Include a liblouis build first and the Easy-API second.
@@ -226,7 +274,7 @@ Include a liblouis build first and the Easy-API second.
 <script>
 console.info("Liblouis Version:", liblouis.version());
 // Should print:
-// Liblouis Version: 3.1.0
+// Liblouis Version: 3.2.0
 </script>
 ```
 
@@ -242,7 +290,7 @@ You can include any liblouis build for this example.
 <script>
 console.info("Liblouis Version:", liblouisBuild.ccall("lou_version", "string"));
 // Should print:
-// Liblouis Version: 3.1.0
+// Liblouis Version: 3.2.0
 </script>
 ```
 
@@ -256,7 +304,7 @@ const liblouis = require("liblouis");
 
 console.info("Liblouis Version using Easy API:", liblouis.version());
 // Should print:
-// Liblouis Version using Easy API: 3.1.0
+// Liblouis Version using Easy API: 3.2.0
 </script>
 ```
 
@@ -453,34 +501,87 @@ and add the following line to each file that uses liblouis
 /// <reference types="liblouis"/>
 ```
 
-### Switching between Builds
+### Usage with Webpack
 
-Switching between builds is supported in nodeJS and the browser. The example
-below uses nodeJS:
+The following code example demonstrates how you can use the asynchronous
+Easy-API in a project using webpack.
 
-```js
-const build_1 = require('liblouis-build/build-no-tables.js');
-const build_2 = require('liblouis-build/build-tables-embeded.js');
+In your module file:
 
-// In nodeJS, liblouis-js uses 'build-no-tables' by default, which is
-// included as build_1 above
-const liblouis = require('liblouis');
+```
+var liblouis = require("liblouis/easy-api");
 
-// use a liblouis build with embeded tables instead:
-liblouis.setLiblouisBuild(build_2);
+var capi_url = require("file-loader!liblouis-build");
+var easyapi_url = require("file-loader!liblouis/easy-api");
 
-// switch back to the default liblouis build
-liblouis.setLiblouisBuild(build_1);
+require.context("liblouis-build/tables/", false);
+var table_url  = "tables/";
+
+var asyncLiblouis = new liblouis.EasyApiAsync({
+	capi: capi_url,
+	easyapi: easyapi_url
+});
+
+asyncLiblouis.enableOnDemandTableLoading(table_url);
+
+asyncLiblouis.version(function(version) {
+     console.info("Running liblouis version ", version, "through asynchronous API.");
+});
 ```
 
-Settings like `registerLogCallback` are automatically applied to new build.
+The [file loader plugin](https://github.com/webpack-contrib/file-loader) is
+used to copy the Easy-API and C-API files into the destination directory.
+
+In your webpack configuration file add the following line:
+
+```
+/* ... */
+externals: { 'liblouis-build': 'commonjs liblouis-build'}
+
+module: {
+	loaders: [
+		{
+			test: /(\.cti|\.ctb|\.utb|\.dis|\.uti|\.tbl|\.dic)$/,
+			loader: 'file-loader?name=tables/[name].[ext]',
+		},
+		/* ... your other loaders ... */
+	]
+}
+/* ... */
+```
+
+The `externals` property prevents webpack from unnecessarily embedding
+`liblouis-build` in the bundle. The loader setting instructs webpack to copy
+all table files that are required in your source file to be copied to a folder
+called `tables/` in your output directory. In combination with the
+`require.context` call in your module file, this will copy all tables to the
+output directory.
+
+### Switching or Running Multiple C-API Builds in Parallel
+
+In browser environments, each C-API build registers itself in the global
+variable
+
+```
+liblouisBuilds : { [version]: EmscriptenModule[] };
+```
+
+which is an object mapping liblouis release version numbers to arrays of C-API
+builds. The C-API build loaded first additionally registers the global variable
+`liblouisBuild`.
+
+You can wrap each build in a `LiblouisEasyApi` or `LiblouisAsyncEasyApi`
+instance.
 
 # Changelog
 
-__Release 0.4.0:__ Removal of build switching `liblouis.setLiblouisBuild`
-build in favor of multiple concurrent instances of the Easy-API. Introduction
-of async Easy-API that automatically creates a worker thread; this allows
-you to use on demand table loading effortlessly.
+__Release 0.5.0:__ Support for new table indexing feature.
+
+__Release 0.4.0:__ Removal of build switching `liblouis.setLiblouisBuild` in
+favor of multiple concurrent instances of the Easy-API `LiblouisEasyApi`;
+Introduction of async Easy-API `LiblouisAsyncEasyApi` that automatically
+creates a worker thread. this allows you to use on demand table loading
+effortlessly; support for UTF-32 builds of liblouis.
 
 *This release is backward compatible:* Liblouis builds for previous versions
 can be used with liblouis-js `0.4.0`.
