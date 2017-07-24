@@ -26,6 +26,7 @@ supports NodeJS and browser environments.
 1. [API Overview](#api-overview)
 	1. [Installation](#installation)
 	2. [List of Available Liblouis Functions](#list-of-available-liblouis-functions)
+	3. [List of Additional Easy-API Methods](#list-of-additional-easy-api-methods)
 	3. [Compiling the Latest Version of Liblouis](#compiling-the-latest-version-of-liblouis)
 	4. [Testing a Liblouis Build](#testing-a-liblouis-build)
 2. [Usage Examples](#usage-examples)
@@ -36,11 +37,12 @@ supports NodeJS and browser environments.
 	5. [Altering a Table Definition on Run-Time](#altering-a-table-definition-on-run-time)
 	6. [Downloading Table Files on Demand in the Browser](#downloading-table-files-on-demand-in-the-browser)
 	7. [Loading Table Files From Disk in NodeJS](#loading-table-files-from-disk-in-nodejs)
-	8. [Dropping the Path Prefix of Bundled Tables](#dropping-the-path-prefix-of-bundled-tables)
-	9. [Debugging and Adjusting the Log Level](#debugging-and-adjusting-the-log-level)
-	10. [Persisting Log Files in NodeJS using Deprecated Liblouis Log Functions](#persisting-log-files-in-nodejs-using-deprecated-liblouis-log-functions)
+	8. [Debugging and Adjusting the Log Level](#debugging-and-adjusting-the-log-level)
+	9. [Persisting Log Files in NodeJS using Deprecated Liblouis Log Functions](#persisting-log-files-in-nodejs-using-deprecated-liblouis-log-functions)
+	10. [Dropping the Path Prefix of Bundled Tables](#dropping-the-path-prefix-of-bundled-tables)
 	11. [Usage with Typescript](#usage-with-typescript)
-	12. [Switching between Builds](#switching-between-builds)
+	12. [Usage with Webpack](#usage-with-webpack)
+	13. [Switching or Running Multiple C-API Builds in Parallel](#switching-or-running-multiple-c-api-builds-in-parallel)
 3. [Changelog](#changelog)
 4. [Licensing](#licensing)
 
@@ -149,18 +151,23 @@ they are deprecated.
 
 The following methods do not have a corresponding C-API function, but are part of the Easy-API.
 
-####enableOnDemandFileLoading(url)
+#### enableOnDemandFileLoading(url)
 
-####LiblouisEasyApi#constructor(build)
+Allows you to make lightweight liblouis builds that do not include any or all required table files.
+Instead table files not embeded in the liblouis C-API build are downloaded from the specified
+url on first access. For usage examples, see [*Downloading Table Files on Demand in the Browser*](#downloading-table-files-on-demand-in-the-browser) and [*Loading Table Files from Disk in NodeJS*](#loading-table-files-from-disk-in-nodejs).
+
+#### LiblouisEasyApi#constructor(build)
 
 ```js
 new LiblouisEasyApi(build :EmscriptenModule|string);
 ```
-
+Create an additional instance of the Easy-API running in the same thread as the caller.
 Takes either a liblouis C-API build or a liblouis release version number as
-argument.
+argument. Also see [*Switching or Running Multiple C-API Builds in Parallel*]().
 
-####LiblouisAsyncEasyApi#constructor(options)
+#### LiblouisAsyncEasyApi#constructor(options)
+
 
 ```js
 new LiblouisAsyncEasyApi({
@@ -168,6 +175,12 @@ new LiblouisAsyncEasyApi({
 	easyapi: string
 });
 ```
+
+Use this constructor to instantiate additional instances of the Easy-API. `capi` and `easyapi`
+are urls of both script files.
+
+⚠ **Warning:** *These scripts at the specified URLs are downloaded and executed in a worker thread.
+It is your responsibility to sanatize these URLs to prevent execution of malicous code.*
 
 ### Compiling the Latest Version of Liblouis
 
@@ -508,7 +521,7 @@ Easy-API in a project using webpack.
 
 In your module file:
 
-```
+```js
 var liblouis = require("liblouis/easy-api");
 
 var capi_url = require("file-loader!liblouis-build");
@@ -534,7 +547,7 @@ used to copy the Easy-API and C-API files into the destination directory.
 
 In your webpack configuration file add the following line:
 
-```
+```js
 /* ... */
 externals: { 'liblouis-build': 'commonjs liblouis-build'}
 
@@ -562,7 +575,7 @@ output directory.
 In browser environments, each C-API build registers itself in the global
 variable
 
-```
+```js
 liblouisBuilds : { [version]: EmscriptenModule[] };
 ```
 
@@ -575,7 +588,7 @@ instance.
 
 # Changelog
 
-__Release 0.5.0:__ Support for new table indexing feature.
+__Release 0.5.0 (*upcoming*):__ Support for new table indexing feature.
 
 __Release 0.4.0:__ Removal of build switching `liblouis.setLiblouisBuild` in
 favor of multiple concurrent instances of the Easy-API `LiblouisEasyApi`;
