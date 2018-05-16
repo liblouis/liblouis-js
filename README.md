@@ -15,10 +15,6 @@ supports NodeJS and browser environments.
 [![build status of latest Easy-Api](https://img.shields.io/travis/liblouis/liblouis-js/master.svg?label=Build%20of%20Easy-API)](https://travis-ci.org/liblouis/liblouis-js)
 [![build status of latest C-Api](https://img.shields.io/travis/liblouis/js-build.svg?branch=master&label=Build%20of%20C-API)](https://travis-ci.org/liblouis/liblouis-js)
 
-<!--[![build status of latest Easy-Api in Browser GUI Thread](https://img.shields.io/travis/liblouis/liblouis-js/master.svg?label=Build%20of%20Easy-API%20GUI-Thread)](https://travis-ci.org/liblouis/liblouis-js)-->
-<!--[![build status of latest Easy-Api in Worker Thread](https://img.shields.io/travis/liblouis/liblouis-js/master.svg?label=Build%20of%20Easy-API%20Worker-Thread)](https://travis-ci.org/liblouis/liblouis-js)-->
-<!--[![build status of latest Easy-Api in NodeJS](https://img.shields.io/travis/liblouis/liblouis-js/master.svg?label=Build%20of%20Easy-API%20NodeJS)](https://travis-ci.org/liblouis/liblouis-js)-->
-
 ---
 
 <p align=center><strong>Table of Contents</strong></p>
@@ -151,10 +147,10 @@ they are deprecated.
 
 The following methods do not have a corresponding C-API function, but are part of the Easy-API.
 
-#### enableOnDemandFileLoading(url)
+#### enableOnDemandTableLoading(url)
 
 Allows you to make lightweight liblouis builds that do not include any or all required table files.
-Instead table files not embeded in the liblouis C-API build are downloaded from the specified
+Instead table files not embedded in the liblouis C-API build are downloaded from the specified
 url on first access. For usage examples, see [*Downloading Table Files on Demand in the Browser*](#downloading-table-files-on-demand-in-the-browser) and [*Loading Table Files from Disk in NodeJS*](#loading-table-files-from-disk-in-nodejs).
 
 #### LiblouisEasyApi#constructor(build)
@@ -344,7 +340,7 @@ console.log(liblouis.translateString("tables/unicode.dis,tables/de-de-g0.utb", "
 
 ### Downloading Table Files on Demand in the Browser
 
-After including a build without a bundled table folder and the Easy-API call
+After including a build without a bundled table folder, use the Easy-API call
 `enableOnDemandTableLoading` with an absolute or relative URL to the table
 directory:
 
