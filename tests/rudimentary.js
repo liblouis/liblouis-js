@@ -37,24 +37,24 @@ for(var i = 0; i < buildlist.length; ++i) {
 		liblouis.charSize() === builds.charSize(buildname));
 
 	assert(buildname + " can translate simple ASCII string",
-		liblouis.translateString(tbl + "de-de-g0.utb", "Hallo") ===
+		liblouis.translateString(tbl + "de-g0.utb", "Hallo") ===
 		"hallo");
 
 	assert(buildname + " can translate simple BMP string",
-		liblouis.translateString(tbl + "unicode.dis," + tbl + "de-de-g0.utb", "cliché") ===
+		liblouis.translateString(tbl + "unicode.dis," + tbl + "de-g0.utb", "cliché") ===
 		"⠉⠇⠊⠉⠓⠈⠑");
 
 	assert(buildname + " can translate simple SMP string",
-		liblouis.translateString(tbl + "unicode.dis," + tbl + "de-de-g0.utb", "cliché") ===
+		liblouis.translateString(tbl + "unicode.dis," + tbl + "de-g0.utb", "cliché") ===
 		"⠉⠇⠊⠉⠓⠈⠑");
 
 	assert(buildname + " test before string compile",
-		liblouis.translateString(tbl + "unicode.dis," + tbl + "de-de-g0.utb", "1") ===
+		liblouis.translateString(tbl + "unicode.dis," + tbl + "de-g0.utb", "1") ===
 		"⠼⠁");
 
-	liblouis.compileString(tbl + "unicode.dis," + tbl + "de-de-g0.utb", "numsign 123456");
+	liblouis.compileString(tbl + "unicode.dis," + tbl + "de-g0.utb", "numsign 123456");
 	assert(buildname + " can use compileString",
-		liblouis.translateString(tbl + "unicode.dis," + tbl + "de-de-g0.utb", "1") ===
+		liblouis.translateString(tbl + "unicode.dis," + tbl + "de-g0.utb", "1") ===
 		"⠿⠁");
 }
 
