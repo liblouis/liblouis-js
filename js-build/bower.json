@@ -1,0 +1,23 @@
+{
+  "name": "liblouis-build",
+  "description": "pre-compiled builds of liblouis for js",
+  "main": [
+    "build-no-tables-utf16.js"
+  ],
+  "moduleType": [
+    "amd",
+    "globals",
+    "node"
+  ],
+  "keywords": [
+    "braille", "transcription", "emscripten", "liblouis",
+    "liblouis-js"
+  ],
+  "authors": [
+    "Reiner Dolp"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/liblouis/js-build.git"
+  }
+}
